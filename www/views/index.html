@@ -1,0 +1,90 @@
+<ion-view title="XXAPP">
+    <ion-tabs class="tabs-icon-top tabs-color-positive">
+        <ion-tab title="首页" href="#index" icon="ion-home">
+            <ion-pane>
+                <div align-title="left" class="bar bar-subheader  item-input-inset">
+                    <label class="item-input-wrapper">
+                        <i class="icon ion-ios-search placeholder-icon"></i>
+                        <input type="search" placeholder="Search">
+                    </label>
+                    <button class="button button-clear">
+                        搜索
+                    </button>
+                </div>
+                <ion-content class="has-subheader">
+                    <ion-slide-box class="index-slider-box" auto-play="true" does-continue="true">
+                        <ion-slide>
+                            <div class="box blue">
+                                <img ng-src="img/img1.jpg" />
+                            </div>
+                        </ion-slide>
+                        <ion-slide>
+                            <div class="box yellow">
+                                <img ng-src="img/img2.jpg" />
+                            </div>
+                        </ion-slide>
+                        <ion-slide on-slide-changed="slideHasChanged(index)">
+                            <div class="box pink">
+                                <img ng-src="img/img3.jpg" />
+                            </div>
+                        </ion-slide>
+                    </ion-slide-box>
+                    <div class="index-row-box">
+                        <div class="row">
+                            <div class="col">
+                                <button class="button button-block button-balanced">
+                                    测试标题
+                                </button>
+                            </div>
+                            <div class="col">
+                                <button class="button button-block button-energized">
+                                    测试标题
+                                </button>
+                            </div>
+                            <div class="col">
+                                <button class="button button-block button-energized">
+                                    测试标题
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button class="button button-block button-assertive">
+                                    测试标题
+                                </button>
+                            </div>
+                            <div class="col">
+                                <button class="button button-block button-assertive">
+                                    测试标题
+                                </button>
+                            </div>
+                            <div class="col">
+                                <button class="button button-block button-royal">
+                                    更多...
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list">
+
+                        <div class="item item-divider pull-center">
+                            热门标题
+                        </div>
+                        <a class="item" href="#">ionic之AngularJS扩展 移动开发(视图导航一) - 推酷</a>
+                        <a class="item" href="#">ionic之AngularJS扩展 移动开发(视图导航一) - 推酷</a>
+                        <a class="item" href="#">ionic之AngularJS扩展 移动开发(视图导航一) - 推酷</a>
+                        <a class="item" href="#">ionic之AngularJS扩展 移动开发(视图导航一) - 推酷</a>
+                        <a class="item" href="#">ionic之AngularJS扩展 移动开发(视图导航一) - 推酷</a>
+
+                    </div>
+                    <ion-infinite-scroll on-infinite="" distance="1%">
+                    </ion-infinite-scroll>
+                </ion-content>
+            </ion-pane>
+        </ion-tab>
+        <ion-tab title="分类" icon="ion-grid">
+        </ion-tab>
+        <ion-tab title="我的" icon="ion-person">
+        </ion-tab>
+    </ion-tabs>
+</ion-view>

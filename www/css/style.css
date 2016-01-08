@@ -1,0 +1,13 @@
+/* Empty. Add your own CSS if you like */
+.index-slider-box img{
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.index-row-box .button.button-block{
+    margin-top: 0;
+    margin-bottom: 0;
+    min-height: 70px;
+    border-radius: 0;
+    font-size: .8rem;
+}
