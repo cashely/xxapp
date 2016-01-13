@@ -11,3 +11,16 @@
     border-radius: 0;
     font-size: .8rem;
 }
+.scroll-bar-v{
+    display: none;
+}
+ion-content{
+    overflow: auto!important;
+}
+.select-box>.col{
+    padding: 10px 0;
+}
+.select-box>.col>select{
+    max-width: 100%!important;
+    background-color: transparent;
+}

@@ -1,0 +1,45 @@
+<div class="modal">
+    <ion-side-menus>
+        <ion-side-menu-content drag-content="true">
+            <ion-header-bar class="bar bar-positive" align-title="left">
+                <div class="buttons">
+                    <button class="button" ng-click="pageHide()"><i class="icon ion-android-close"></i></button>
+                </div>
+                <h1 class="title">{{post.title}}</h1>
+                <div class="buttons">
+                    <button class="button"><i class="icon ion-ios-redo"></i></button>
+                    <button class="button"><i class="icon ion-ios-pricetags"></i></button>
+                    <button class="button"><i class="icon ion-email"></i></button>
+                    <button class="button"><i class="icon ion-more"></i></button>
+                </div>
+            </ion-header-bar>
+            <ion-content has-bouncing="false">
+                <div class="padding">
+                    {{post.content}}
+                </div>
+                <ul class="list">
+                    <li class="item item-divider">
+                        评论
+                        <span class="badge badge-assertive">10</span>
+                    </li>
+                    <li class="item item-avatar" ng-repeat="commentList in post.comment" href="#">
+                        <img src="img/default-40-40.png">
+                        <h2>{{commentList.name}}</h2>
+                        <p>{{commentList.content}}</p>
+                    </li>
+                </ul>
+            </ion-content>
+            <ion-footer-bar class="item-input-inset bar-stable">
+                <label class="item-input-wrapper">
+                    <input type="text" placeholder="说两句吧...">
+                </label>
+                <button class="button button-clear">
+                    <i class="icon ion-ios-compose-outline"></i>
+                </button>
+            </ion-footer-bar>
+        </ion-side-menu-content>
+        <ion-side-menu side="right">
+            sdad
+        </ion-side-menu>
+    </ion-side-menus>
+</div>
