@@ -1,0 +1,16 @@
+<div class="modal" ng-controller="searchController">
+    <ion-header-bar class="bar bar-positive item-input-inset">
+        <div class="buttons">
+            <button class="button" ng-click="hideSearchModal()"><i class="icon ion-android-close"></i></button>
+        </div>
+        <label class="item-input-wrapper">
+            <i class="icon ion-ios-search placeholder-icon"></i>
+            <input type="search" autofocus id="search" placeholder="Search">
+        </label>
+        <button ng-click="searchAction()" class="button button-clear">
+            搜索
+        </button>
+    </ion-header-bar>
+    <ion-content class="padding">
+    </ion-content>
+</div>

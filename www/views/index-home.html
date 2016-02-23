@@ -3,11 +3,8 @@
         <div align-title="left" class="bar bar-subheader  item-input-inset">
             <label class="item-input-wrapper">
                 <i class="icon ion-ios-search placeholder-icon"></i>
-                <input type="search" placeholder="Search">
+                <input type="search" placeholder="Search" ng-focus="openSearchModal()">
             </label>
-            <button class="button button-clear">
-                搜索
-            </button>
         </div>
         <ion-content class="has-subheader" has-bouncing="true">
             <ion-slide-box class="index-slider-box" auto-play="true" does-continue="true">
@@ -30,46 +27,58 @@
             <div class="index-row-box">
                 <div class="row">
                     <div class="col">
-                        <button class="button button-block button-balanced">
-                            测试标题
+                        <button ui-sref="index.home-xx({type:'招标信息'})" class="button button-block button-balanced">
+                            招标信息
                         </button>
                     </div>
                     <div class="col">
-                        <button ui-sref="index.home-zcjd" class="button button-block button-energized">
-                            测试标题
+                        <button ui-sref="index.home-xx({type:'政策解读'})" class="button button-block button-energized">
+                            政策解读
                         </button>
                     </div>
                     <div class="col">
-                        <button class="button button-block button-energized">
-                            测试标题
+                        <button ui-sref="index.home-jgdh" class="button button-block button-energized">
+                            机构导航
                         </button>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <button class="button button-block button-assertive">
-                            测试标题
+                        <button ui-sref="index.home-sub({type:1,data:2})" native-ui-sref-opts="{reload: true}" native-options="{type: 'slide', direction:'down'}" class="button button-block button-assertive">
+                            我的订阅
                         </button>
                     </div>
                     <div class="col">
-                        <button class="button button-block button-assertive">
-                            测试标题
+                        <button ui-sref="index.home-collect" class="button button-block button-assertive">
+                            我的收藏
                         </button>
                     </div>
                     <div class="col">
-                        <button class="button button-block button-royal">
+                        <button ui-sref="index.classify" class="button button-block button-royal">
                             更多...
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="list">
+            <ion-list>
                 <div class="item item-divider pull-center">
                     热门标题
                 </div>
-                <a class="item" href="#" ng-click="pageShow({{post.id}})" ng-repeat="post in hotPost">{{post.title}}</a>
-
-            </div>
+                <ion-item class="item-avatar" ng-repeat="post in hotPost" ui-sref="page({id:$index})">
+                    <img ng-src="{{item.img || 'img/default-40-40.png'}}">
+                    <h2>{{post.title}}</h2>
+                    <p>Nine Inch Nails</p>
+                    <div class="item-footer">
+                        <span class="item-time">12-12</span>
+                        <span><i class="ion ion-record"></i></span>
+                        <span><i class="ion royal ion-record"></i></span>
+                        <span><i class="ion assertive ion-record"></i></span>
+                        <span><i class="ion ion-ios-pricetags"></i></span>
+                        <span><i class="ion ion-ios-eye-outline"></i>12</span>
+                        <span><i class="ion ion-ios-compose-outline"></i>13</span>
+                    </div>
+                </ion-item>
+            </ion-list>
             <ion-infinite-scroll ng-if="cancelMoreLoad()" on-infinite="loadMoreHotPost()" distance="1%">
             </ion-infinite-scroll>
         </ion-content>

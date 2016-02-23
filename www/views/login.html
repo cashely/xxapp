@@ -2,14 +2,16 @@
     <ion-content>
         <div class="list list-inset">
             <label class="item item-input">
-                <input type="text" placeholder="Name">
+                <i class="icon fa fa-user placeholder-icon"></i>
+                <input type="text" ng-model="username" class="userName" placeholder="Name">
             </label>
             <label class="item item-input">
-                <input type="password" placeholder="Password">
+                <i class="icon fa fa-lock placeholder-icon"></i>
+                <input type="password" ng-model="password" class="passWord" placeholder="Password">
             </label>
         </div>
         <div class="padding">
-            <button ui-sref="index.home" class="button button-positive button-block">登 录</button>
+            <button class="button button-positive button-block" ng-click="validAcccount()">登 录</button>
         </div>
         <div class="padding text-right"><a ui-sref="reg.code">没有帐号？注册</a></div>
     </ion-content>

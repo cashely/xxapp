@@ -1,7 +1,55 @@
-<ion-view view-title="jgdh">
+<ion-view view-title="机构导航">
+    <ion-nav-bar align-title="left" class="bar-positive">
+        <ion-nav-back-button></ion-nav-back-button>
+        <ion-nav-buttons side="right">
+            <button class="button icon-left button-clear ion-location button-light"> {{province}}</button>
+            <button class="button" ng-click="openSearchModal()">
+                <i class="icon ion-ios-search-strong"></i>
+            </button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
     <ion-pane>
         <ion-content class="has-header">
-            jgdh
+            <ion-list>
+                <ion-item ng-click="showMapModal(32.1353040000,111.9891980000)" class="item item-icon-right">
+                    Hello
+                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
+                </ion-item>
+                <ion-item ng-click="showMapModal(30.1614850000,115.0500490000)" class="item item-icon-right">
+                    Hello
+                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
+                </ion-item>
+                <ion-item ng-click="showMapModal(31.7430870000,113.3459990000)" class="item item-icon-right">
+                    Hello
+                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
+                </ion-item>
+                <ion-item class="item item-icon-right">
+                    Hello
+                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
+                </ion-item>
+                <ion-item class="item item-icon-right">
+                    Hello
+                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
+                </ion-item>
+                <ion-item class="item item-icon-right">
+                    Hello
+                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
+                </ion-item>
+                <ion-item class="item item-icon-right">
+                    Hello
+                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
+                </ion-item>
+                <ion-item class="item item-icon-right">
+                    Hello
+                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
+                </ion-item>
+                <ion-item class="item item-icon-right">
+                    Hello
+                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
+                </ion-item>
+            </ion-list>
+
         </ion-content>
     </ion-pane>
 </ion-view>

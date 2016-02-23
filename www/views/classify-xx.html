@@ -1,0 +1,70 @@
+<ion-view view-title="{{type}}">
+    <ion-nav-bar align-title="left" class="bar-positive">
+        <ion-nav-back-button></ion-nav-back-button>
+        <ion-nav-buttons side="right">
+            <button class="button">
+                <i class="icon ion-email-unread"></i>
+            </button>
+            <button class="button">
+                <i class="icon ion-folder"></i>
+            </button>
+            <button class="button" ng-click="openSearchModal()">
+                <i class="icon ion-ios-search-strong"></i>
+            </button>
+            <button class="button">
+                <i class="icon ion-more"></i>
+            </button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-pane>
+        <div class="bar bar-stable bar-subheader">
+            <div class="row select-box">
+                <div class="col item-input item-select" style="line-height:32px;">
+                    <select>
+                        <option selected>时间</option>
+                        <option>上月</option>
+                        <option>上周</option>
+                        <option>2016年1月21日 昨天</option>
+                        <option>2016年1月21日 今天</option>
+                        <option>2016年1月22日 明天</option>
+                    </select>
+                </div>
+                <div class="col item-input item-select">
+                    <select>
+                        <option>Blue</option>
+                        <option selected>省份</option>
+                        <option>Red</option>
+                    </select>
+                </div>
+                <div class="col item-input item-select">
+                    <select>
+                        <option>Blue</option>
+                        <option selected>文章类型</option>
+                        <option>Red</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <ion-content class="has-subheader">
+            
+            <ion-list>
+                <ion-item class="item-avatar" ng-repeat="item in xxlist">
+                    <img ng-src="{{item.img || 'img/default-40-40.png'}}">
+                    <h2>{{item.title}}</h2>
+                    <p>Nine Inch Nails</p>
+                    <ion-option-button class="button-dark" ng-click="share('item')">
+                        历史
+                    </ion-option-button>
+                    <ion-option-button class="button-assertive" ng-click="share('item')">
+                        分享
+                    </ion-option-button>
+                    <div class="item-footer">
+                        <span><i class="ion ion-ios-infinite"></i></span>
+                        <span><i class="ion ion-ios-color-wand"></i></span>
+                        <span><i class="ion ion-ios-locked-outline"></i></span>
+                    </div>
+                </ion-item>
+            </ion-list>
+        </ion-content>
+    </ion-pane>
+</ion-view>

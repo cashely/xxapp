@@ -1,26 +1,115 @@
 /* Empty. Add your own CSS if you like */
-.index-slider-box img{
+.index-slider-box img {
     width: 100%;
     height: auto;
     display: block;
 }
-.index-row-box .button.button-block{
+.index-row-box .button.button-block {
     margin-top: 0;
     margin-bottom: 0;
     min-height: 70px;
     border-radius: 0;
     font-size: .8rem;
 }
-.scroll-bar-v{
+.scroll-bar-v {
     display: none;
 }
-ion-content{
-    overflow: auto!important;
+ion-content {
+    overflow: hidden!important;
 }
-.select-box>.col{
+.select-box>.col {
     padding: 10px 0;
 }
-.select-box>.col>select{
+.select-box>.col>select {
     max-width: 100%!important;
     background-color: transparent;
+}
+.slide-in-left {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+}
+.slide-in-left.ng-enter,
+.slide-in-left > .ng-enter {
+    -webkit-transition: all cubic-bezier(0.1, 0.7, 0.1, 1) 400ms;
+    transition: all cubic-bezier(0.1, 0.7, 0.1, 1) 400ms;
+}
+.slide-in-left.ng-enter-active,
+.slide-in-left > .ng-enter-active {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+.slide-in-left.ng-leave,
+.slide-in-left > .ng-leave {
+    -webkit-transition: all ease-in-out 250ms;
+    transition: all ease-in-out 250ms;
+}
+
+/*解决百度地图拖动出现error:Uncaught TypeError: Cannot read property 'offsetLeft' of null*/
+
+.modal-backdrop {
+    position: absolute;
+}
+
+/*ionic android actionSheet样式*/
+
+.platform-android .action-sheet-backdrop.active {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+.platform-android .action-sheet {
+    margin: 0 8px;
+}
+.platform-android .action-sheet .action-sheet-title,
+.platform-android .action-sheet .button {
+    text-align: center;
+    font-size: 16px;
+    color: #007aff;
+}
+.platform-android .action-sheet-group .button{
+    border-width:1px 0 0 0;
+    border-style: solid;
+    border-color: #d1d3d6;
+}
+.platform-android .action-sheet .action-sheet-title {
+    font-size: 14px;
+    padding: 16px;
+    color: #666;
+}
+.platform-android .action-sheet .button.active,
+.platform-android .action-sheet .button.activated {
+    background: #e8e8e8;
+}
+.platform-android .action-sheet .button.destructive{
+    color: #ff3b30;
+}
+.platform-android .action-sheet-group {
+    margin-bottom: 8px;
+    border-radius: 4px;
+    background-color: #f1f2f3;
+}
+.platform-android .action-sheet-cancel {
+    display: block;
+}
+.platform-android .action-sheet-has-icons .button {
+    padding-left: 56px;
+}
+
+.item p{
+    margin-bottom: 10px;
+}
+.item-footer{
+    position: absolute;
+    bottom:0;
+    left: 72px;
+    right: 5px;
+    color: #9a9999;
+    text-align: right;
+}
+.item-footer span{
+    margin: 0 5px;
+    line-height: 2;
+    font-size: 12px;
+}
+.item-footer span.item-time{
+    float: left;
+    margin-left: 0;
 }
