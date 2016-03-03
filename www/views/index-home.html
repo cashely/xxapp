@@ -7,32 +7,24 @@
             </label>
         </div>
         <ion-content class="has-subheader" has-bouncing="true">
-            <ion-slide-box class="index-slider-box" auto-play="true" does-continue="true">
-                <ion-slide>
+            <ion-slide-box style="width:100%;" class="index-slider-box" auto-play=true does-continue=true>
+                <ion-slide ng-repeat="item in hotImg">
                     <div class="box blue">
-                        <img ng-src="img/img1.jpg" />
-                    </div>
-                </ion-slide>
-                <ion-slide>
-                    <div class="box yellow">
-                        <img ng-src="img/img2.jpg" />
-                    </div>
-                </ion-slide>
-                <ion-slide on-slide-changed="slideHasChanged(index)">
-                    <div class="box pink">
-                        <img ng-src="img/img3.jpg" />
+                        <div style="width:100%;height:157px">
+                            <img ng-src="http://172.19.8.160:9202/rype-app/app/bid/carouselImg.do?sn={{item[0]}}" />
+                        </div>
                     </div>
                 </ion-slide>
             </ion-slide-box>
             <div class="index-row-box">
                 <div class="row">
                     <div class="col">
-                        <button ui-sref="index.home-xx({type:'招标信息'})" class="button button-block button-balanced">
+                        <button ui-sref="index.home-xx({type:'招标信息',id:'zbxx'})" class="button button-block button-balanced">
                             招标信息
                         </button>
                     </div>
                     <div class="col">
-                        <button ui-sref="index.home-xx({type:'政策解读'})" class="button button-block button-energized">
+                        <button ui-sref="index.home-xx({type:'政策解读',id:'zcjd'})" class="button button-block button-energized">
                             政策解读
                         </button>
                     </div>
@@ -64,16 +56,16 @@
                 <div class="item item-divider pull-center">
                     热门标题
                 </div>
-                <ion-item class="item-avatar" ng-repeat="post in hotPost" ui-sref="page({id:$index})">
-                    <img ng-src="{{item.img || 'img/default-40-40.png'}}">
-                    <h2>{{post.title}}</h2>
-                    <p>Nine Inch Nails</p>
+                <ion-item class="item-avatar" ng-repeat="post in hotPost" ui-sref="page({id:post[0]})">
+                    <img ng-src="{{post.img || 'img/default-40-40.png'}}">
+                    <h2>{{post[1]}}</h2>
+                    <p>{{post[5]}}</p>
                     <div class="item-footer">
-                        <span class="item-time">12-12</span>
-                        <span><i class="ion ion-record"></i></span>
-                        <span><i class="ion royal ion-record"></i></span>
-                        <span><i class="ion assertive ion-record"></i></span>
-                        <span><i class="ion ion-ios-pricetags"></i></span>
+                        <span class="item-time">{{post[6]}}</span>
+                        <span ng-show="post[7] == 1"><i class="ion ion-record"></i></span>
+                        <span ng-show="post[7] == 3"><i class="ion royal ion-record"></i></span>
+                        <span  ng-show="post[7] == 5"><i class="ion assertive ion-record"></i></span>
+                        <span><i class="ion ion-ios-pricetags" ng-class="{'energized':post[8]}"></i></span>
                         <span><i class="ion ion-ios-eye-outline"></i>12</span>
                         <span><i class="ion ion-ios-compose-outline"></i>13</span>
                     </div>

@@ -1,32 +1,39 @@
 angular.module('starter.controllers', [])
-    .controller('homeController', function ($scope, $http, $rootScope, $state,$ionicNavBarDelegate) {
+    .controller('homeController', function ($scope, $http, $rootScope, $state,$ionicNavBarDelegate,$ionicSlideBoxDelegate) {
         $scope.hotPost = [];
-        $http({
-            url: 'json/hotPost.json',
-            method: 'POST'
-        }).success(function (data) {
-            console.log(data);
-            $scope.hotPost = data;
-        });
+        var page = 1,ps = 5,total = 100;
         $scope.loadMoreHotPost = function () {
+            if($scope.hotPost.length >= total){
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+                return false;
+            }
+            isload = true;
             $http({
-                url: 'http://192.168.1.108:8888/json/hotPost.json',
-                method: 'POST'
+                url: httpAddress + 'app/bid/hotArticles.do',
+                method: 'POST',
+                params:{
+                    pageNo: page ,
+                    pageSize: ps,
+                    APPCLIENTID: $rootScope.APPCLIENTID
+                }
             }).success(function (data) {
-                $scope.hotPost = $scope.hotPost.concat(data);
+                total = data.data.total;
+                page++;
+                var content = (data.data.rows).slice(1);
+                for(v in content){
+                    $scope.hotPost.push(content[v]);
+                }
+                // console.log((data.data.rows).length);
+                isload = false;
+
                 $scope.$broadcast('scroll.infiniteScrollComplete');
             }).error(function(data,state){
-                     alert(data+','+state);
-                     });
+                    ajaxError('没有更多了')
+            });
         };
-        $scope.$on('stateChangeSuccess', function () {
-            console.log(1);
-            $scope.loadMoreHotPost();
-
-        });
-        $scope.cancelMoreLoad = function () {
-            return $scope.hotPost.length > 10 ? false : true;
-        };
+        $scope.cancelMoreLoad = function(){
+            return $scope.hotPost.length < total;
+        }
         $scope.indexState = function (title) {
             $state.go('index.home-xx', {
                 title: title
@@ -36,18 +43,26 @@ angular.module('starter.controllers', [])
             $state.go('index.home-xx', {
                 title: title
             });
-        }
+        };
+
+        // 获取首页banner
+        $http({
+            url:httpAddress+'app/bid/carousels.do',
+            method:'POST'
+        }).success(function(res){
+            if(res.success){
+                $scope.hotImg = (res.data).slice(1);
+                $ionicSlideBoxDelegate.update();
+            };
+        })
     })
     //手机验证
-    .controller('regCodeController', function ($scope, $ionicPopup, $state, $timeout, $http) {
-        $scope.phoneNumber = '+86';
+    .controller('regCodeController', function ($scope,$rootScope, $ionicPopup, $state, $timeout, $http) {
         $scope.phoneSendCode = '发送验证码';
         var b = false;
-        var setPhoneSendCode = function (text) {
-            $scope.phoneSendCode = text
-        };
+        $scope.buttonDisable = true;
         $scope.checkPhoneNumber = function (num) {
-            if (num.length < 11) {
+            if (num.length && num.length < 11) {
                 var alertPopup = $ionicPopup.alert({
                     title: '温性提示！',
                     template: '手机号码格式不正确！',
@@ -55,33 +70,77 @@ angular.module('starter.controllers', [])
                 });
                 b = false;
             } else {
-                (function () {
-                    $('#sendCode').attr('disable', true).addClass('button-stable').removeClass('button-positive');
-                    var i = 6;
-                    $scope.$apply(setPhoneSendCode(i + 's后可重发'));
-                    var t = setInterval(function () {
-                        if (i != 0) {
-                            i--;
-                            $scope.$apply(setPhoneSendCode(i + 's后可重发'));
-
-                        } else {
-                            $scope.$apply(setPhoneSendCode('发送验证码'));
-                            $('#sendCode').attr('disable', false).removeClass('button-stable').addClass('button-positive')
-                            clearInterval(t);
-                        }
-                    }, 1000);
-                    b = true;
-                })();
+                var i = 6;
+                $scope.buttonDisable = false;
+                $scope.phoneSendCode = i+'s后可重发';
+                t = setInterval(function(){
+                    if(i>1){
+                        i--;
+                        $scope.phoneSendCode = i+'s后可重发';
+                        $scope.$apply()
+                    }else{
+                        $scope.phoneSendCode = '发送验证码';
+                        $scope.buttonDisable = true;
+                        clearInterval(t);
+                        $scope.$apply()
+                    }  
+                },1000);
                 //                远程请求发送手机发送验证码
                 $http({
-                    //                    url:''
+                   url:httpAddress + 'app/sys/sendVCode.do',
+                   params:{
+                    mobile:num,
+                    busCode:'R'
+                   }
+                }).success(function(res){
+                    if(res.success){
+                        // ajaxError('验证码发送成功：' + res.code);
+                    }
+                }).error(function(res){
+                    ajaxFail();
                 });
             }
         };
-        $scope.checkPhone = function () {
-            if (!!b) {
-                $state.go('reg.form');
+        $scope.checkPhone = function (phoneNum,code) {
+            $http({
+                url:httpAddress + 'app/sys/checkVCode.do',
+                method:"POST",
+                params:{
+                    vcode:code,
+                    APPCLIENTID:phoneNum
+                }
+            }).success(function(res){
+                $rootScope.regPhone = phoneNum;//记录全局手机变量
+                if(res.success){
+                   $state.go('reg.form',{phone:phoneNum,code:code});  
+               }else{
+                 ajaxError(res.code);
             }
+            }).error(function(res){
+                ajaxFail();
+            });
+        }
+    })
+    .controller('regFormController', function ($scope,$rootScope,$state,$http){
+        $scope.regAction = function(name,mail,psw){
+            console.log(name+','+mail+','+psw);
+            $http({
+                url:httpAddress + 'app/sys/regist.do',
+                params:{
+                    nickname:name,
+                    email:mail,
+                    tel:$rootScope.regPhone,
+                    password:psw,
+                    APPCLIENTID:$rootScope.regPhone
+                },
+                method:'POST'
+            }).success(function(res){
+                if(res.success){
+                    $rootScope.regPhone = res.data;
+                    localStorage.setItem('userInfo', '{"userName":"' + res.data + '","passWord":""}');
+                    $state.go('login');
+                }
+            });
         }
     })
     .controller('zcjdController', function ($scope) {
@@ -132,7 +191,7 @@ angular.module('starter.controllers', [])
             });
         }
         $http({
-            url: 'json/classify.json',
+            url: httpAddress + 'app/bid/childrenTypes.do',
         }).success(function (data) {
             $scope.classify = data;
             $scope.classify.hotClassify = (function () {
@@ -148,6 +207,25 @@ angular.module('starter.controllers', [])
                 }
                 return arr;
             })();
+        })
+    })
+    .controller('typeController', function ($scope, $rootScope, $state, $stateParams, $http) {
+        $scope.type = $state.params.type;
+        $scope.share = function (msg) {
+            window.plugins.socialsharing.share(msg);
+        }
+        $http({
+            url: httpAddress + 'app/bid/childrenTypes.do',
+            method:'POST',
+            params:{
+                root_type:$state.params.title,
+                APPCLIENTID:$rootScope.APPCLIENTID
+            }
+        }).success(function (res) {
+            if(res.success){
+
+                $scope.xxlist = res.data.rows.slice(1);
+            }
         })
     })
     .controller('indexsubController', function ($scope, $http, $state) {
@@ -176,29 +254,24 @@ angular.module('starter.controllers', [])
             })();
         })
     })
-    .controller('indexcollectController', function ($scope, $http, $state) {
-        $scope.classifyState = function (title) {
-            $state.go('index.home-collect-xx', {
-                title: title
+    .controller('collectController', function ($scope,$rootScope, $http, $state) {
+        console.log($state.current.name);
+        $scope.classifyState = function (id,title) {
+            $state.go($state.current.name+'-xx', {
+                title: title,
+                id: id
             });
         }
         $http({
-            url: 'json/classify.json',
-        }).success(function (data) {
-            $scope.classify = data;
-            $scope.classify.hotClassify = (function () {
-                var _d = $scope.classify.hotClassify,
-                    _l = $scope.classify.hotClassify.length,
-                    arr = [];
-                for (var i = 0, key = 0; i < _l; i++) {
-                    if (i % 2 == 0) {
-                        i == 0 ? key = 0 : key++;
-                        arr[key] = [];
-                    }
-                    arr[key].push(_d[i]);
-                }
-                return arr;
-            })();
+            url: httpAddress + 'app/bid/collectTypeGroup.do',
+            method:'POST',
+            params:{
+                APPCLIENTID:$rootScope.APPCLIENTID,
+            }
+        }).success(function (res) {
+            if(res.success){
+                $scope.collectGroup = res.data.slice(1);
+            }
         })
     })
     .controller('searchController', function ($scope) {
@@ -206,53 +279,85 @@ angular.module('starter.controllers', [])
             console.log($('#search').val());
         }
     })
-    .controller('xxController', function ($scope, $stateParams, $http) {
-        $scope.type = $stateParams.type;
+    .controller('xxController', function ($scope, $rootScope, $state, $stateParams, $http) {
+        $scope.type = $state.params.title;
         $scope.share = function (msg) {
             window.plugins.socialsharing.share(msg);
         }
         $http({
-            url: 'json/xx.json'
-        }).success(function (data) {
-            $scope.xxlist = data;
+            url: httpAddress + 'app/bid/getCollections.do',
+            method:'POST',
+            params:{
+                "params[type_id]":$state.params.id,
+                APPCLIENTID:$rootScope.APPCLIENTID
+            }
+        }).success(function (res) {
+            if(res.success){
+
+                $scope.xxlist = res.data.rows.slice(1);
+            }
         })
     })
     .controller('loginController', function ($scope, $rootScope, $http, $state, $ionicPopup, $timeout, $cookies) {
-        console.log(httpAddress);
-        $scope.username = JSON.parse(localStorage.getItem('autoLogin')).userName;
-        $scope.password = JSON.parse(localStorage.getItem('autoLogin')).passWord;
-        $scope.validAcccount = function () {
-            var userName = $('.userName').val();
-            var passWord = $('.passWord').val();
-            //            console.log(JSON.parse($cookies.get('userInfo')));
+        if(localStorage.getItem('userInfo')){
+            $rootScope.APPCLIENTID = JSON.parse(localStorage.getItem('userInfo')).userName;
+            $scope.username = JSON.parse(localStorage.getItem('userInfo')).userName;
+            $scope.password = JSON.parse(localStorage.getItem('userInfo')).passWord;
+        }
+        // $scope.token = localStorage.getItem('token');
+        // console.log($scope.username);
+        var loginFn = function(id,psw){
+            var userName = id;
+            var passWord = psw;
+            console.log(httpAddress);
             $http({
-                url: 'json/validAccount.json',
-                //                url: 'http://192.168.1.106:8080/AppServer/login',
+                url:httpAddress + 'app/sys/login.do',
                 params: {
-                    username: userName,
+                    mobile: userName,
                     password: passWord
                 },
-                method: "POST"
+                method: "POST",
+                timeout: 10 * 1000
 
             }).success(function (data) {
-                if (data.code == 1) {
+                if (data.success) {
                     //                    console.log(JSON.stringify(data.info));
                     $rootScope.userInfo = JSON.stringify(data.info);
                     $cookies.put('userInfo', JSON.stringify(data.info));
+
                     localStorage.setItem('userInfo', '{"userName":"' + userName + '","passWord":"' + passWord + '"}');
                     localStorage.setItem('autoLogin', 1);
+                    localStorage.setItem('token',data.data);
+                    $rootScope.APPCLIENTID = userName;
                     $state.go('index.home'); //跳转首页
-                } else if (data.code == 0) {
-                    var alertPopup = $ionicPopup.alert({
-                        title: '温馨提示',
-                        template: data.message
-                    });
-                    $timeout(function () {
-                        alertPopup.close();
-                    }, 3000);
                 }
-
-            })
+                if (data.code) {
+                    ajaxError(data.msg);
+                }
+            }).error(function(){
+                ajaxFail();
+            });
+        };
+        if(localStorage.getItem('token') && localStorage.getItem('autoLogin') == 1){
+            $http({
+                url:httpAddress + 'app/sys/ autoLogin.do',
+                method:'POST',
+                params:{
+                    token:localStorage.getItem('token')
+                }
+            }).success(function(res){
+                if(res.success){
+                    $state.go('index.home');
+                }else{
+                    ajaxError(res.code);
+                }
+            }).error(function(){
+                ajaxFail();
+            });
+        }
+        $scope.validAcccount = function (id,psw) {
+            loginFn(id,psw);
+            
         }
     })
     .controller('memberController', function ($scope, $cookies, $state) {
@@ -261,4 +366,15 @@ angular.module('starter.controllers', [])
             localStorage.setItem('autoLogin', 0);
             $state.go('login');
         }
+    })
+    // 省份列表控制器
+    .controller('provinceController',function ($scope,$http){
+        $http({
+            url:httpAddress+'app/res/provinces.do',
+            method:'POST'
+        }).success(function(res){
+            if(res.success){
+                $scope.provinces = res.data.slice(1);
+            } 
+        });
     })

@@ -29,18 +29,16 @@
                         <option>2016年1月22日 明天</option>
                     </select>
                 </div>
-                <div class="col item-input item-select">
+                <div class="col item-input item-select" ng-controller="provinceController">
                     <select>
-                        <option>Blue</option>
-                        <option selected>省份</option>
-                        <option>Red</option>
+                        <option>省份</option>
+                        <option ng-repeat="province in provinces">{{province[1]}}</option>
                     </select>
                 </div>
                 <div class="col item-input item-select">
                     <select>
-                        <option>Blue</option>
-                        <option selected>文章类型</option>
-                        <option>Red</option>
+                        <option>文章类型</option>
+                        <option ng-repeat="articleType in articleTypeList" ng-value="{{articleType[0]}}">{{articleType[1]}}</option>
                     </select>
                 </div>
             </div>
@@ -48,10 +46,10 @@
         <ion-content class="has-subheader">
             
             <ion-list>
-                <ion-item class="item-avatar" ng-repeat="item in xxlist">
+                <ion-item class="item-avatar" ui-sref="page({id:item[0]})" ng-repeat="item in xxlist">
                     <img ng-src="{{item.img || 'img/default-40-40.png'}}">
-                    <h2>{{item.title}}</h2>
-                    <p>Nine Inch Nails</p>
+                    <h2>{{item[1]}}</h2>
+                    <p>{{item[5]}}</p>
                     <ion-option-button class="button-dark" ng-click="share('item')">
                         历史
                     </ion-option-button>
@@ -59,9 +57,13 @@
                         分享
                     </ion-option-button>
                     <div class="item-footer">
-                        <span><i class="ion ion-ios-infinite"></i></span>
-                        <span><i class="ion ion-ios-color-wand"></i></span>
-                        <span><i class="ion ion-ios-locked-outline"></i></span>
+                        <span class="item-time">{{item[6]}}</span>
+                        <span ng-show="item[7] == 1"><i class="ion ion-record"></i></span>
+                        <span ng-show="item[7] == 3"><i class="ion royal ion-record"></i></span>
+                        <span  ng-show="item[7] == 5"><i class="ion assertive ion-record"></i></span>
+                        <span><i class="ion ion-ios-pricetags" ng-class="{'energized':item[8]}"></i></span>
+                        <span><i class="ion ion-ios-eye-outline"></i>12</span>
+                        <span><i class="ion ion-ios-compose-outline"></i>13</span>
                     </div>
                 </ion-item>
             </ion-list>

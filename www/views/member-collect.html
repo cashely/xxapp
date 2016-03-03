@@ -2,7 +2,7 @@
     <ion-pane>
         <ion-content has-bouncing="true" class="has-header has-tabs">
             <ion-list>
-                <ion-item ng-repeat="item in classify.otherClassify" ng-click="classifyState(item.title)" class="item item-icon-right">{{item.title}}<i class="button-small item-note icon ion-ios-arrow-right"></i></ion-item>
+                <ion-item ng-repeat="item in collectGroup" ng-click="classifyState('{{item[0]}}','{{item[1]}}')" class="item item-icon-right">{{item[1]}}<i class="button-small item-note icon ion-ios-arrow-right"></i></ion-item>
             </ion-list>
         </ion-content>
     </ion-pane>

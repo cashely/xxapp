@@ -17,6 +17,16 @@
 ion-content {
     overflow: hidden!important;
 }
+.slider-slides{
+    width: 100%;
+}
+.page-cotent img{
+    width: 100%;
+    height: auto;
+}
+.slider-pager .slider-pager-page{
+    color: #fff;
+}
 .select-box>.col {
     padding: 10px 0;
 }
@@ -112,4 +122,9 @@ ion-content {
 .item-footer span.item-time{
     float: left;
     margin-left: 0;
+}
+.logo{
+    padding: 50px 0 20px 0;
+    background-color: #1da0cb;
+    text-align: center;
 }

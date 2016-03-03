@@ -22,7 +22,8 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
             cordova.plugins.Keyboard.disableScroll(true);
         }
         if (window.StatusBar) {
-            StatusBar.styleDefault();
+            $cordovaStatusbar.overlaysWebView(true);
+            $cordovaStatusbar.style(2);
         };
         //    检测网络状态
         $rootScope.netState = $cordovaNetwork.isOnline();
@@ -132,76 +133,35 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
         return false;
     }, 101);
 
-    //自动登录
 
-    var localUrl = "http://192.168.1.106:8080/AppServer/getCookies";
-    if (!localStorage.getItem('autoLogin')) {
-        localStorage.setItem('autoLogin', 1)
-    }
-    //    alert(localStorage.getItem('autoLogin'))
-    $http({
-        url: 'json/validSession.json',
-        //        url: localUrl,
-        dataType: 'json'
-    }).success(function (data) {
-        if (data.state == 1 && $location.path() == '/login') {
-            $state.go("index.home");
-        } else if (data.state == 0 && localStorage.getItem('autoLogin') == '1') {
-            $http({
-                //                url: 'http://192.168.1.106:8080/AppServer/login',
-                url: 'json/validSession.json',
-                params: {
-                    username: $rootScope.username,
-                    password: $rootScope.password
-                },
-                method: "POST"
-            }).success(function (data) {
-                if (data.code == 1) {
-                    //                    console.log(JSON.stringify(data.info));
-                    $rootScope.userInfo = JSON.stringify(data.info);
-                    $cookies.put('userInfo', JSON.stringify(data.info));
-                    localStorage.setItem('autoLogin', 1);
-                    $state.go('index.home'); //跳转首页
-                } else if (data.code == 0) {
-                    var alertPopup = $ionicPopup.alert({
-                        title: '温馨提示',
-                        template: data.message
-                    });
-                    $timeout(function () {
-                        alertPopup.close();
-                    }, 3000);
-                }
 
-            })
-        }
-    }).error(function (err) {
+    // 公共方法
+    ajaxMsg = function(msg){
         var alertPopup = $ionicPopup.alert({
-            title: '温馨提示',
-            template: '网络故障！'
-        });
-        $timeout(function () {
-            alertPopup.close();
-        }, 3000);
-    });
-    //开启web本地存储服务
-    //    $rootScope.db = 
+                            title: '温馨提示',
+                            template: 'msg'
+                        });
+                        $timeout(function () {
+                            alertPopup.close();
+                        }, 3000);
+    }
+    ajaxError = function(msg){
+        var alertPopup = $ionicPopup.alert({
+                            title: '温馨提示',
+                            template: msg
+                        });
+                        $timeout(function () {
+                            alertPopup.close();
+                        }, 3000);
+    }
+    ajaxFail = function(){
+        var alertPopup = $ionicPopup.alert({
+                            title: '温馨提示',
+                            template: '网络错误！'
+                        });
+                        $timeout(function () {
+                            alertPopup.close();
+                        }, 3000);
+    }
 
-    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, $cookies) {
-        $http({
-            url: 'json/validSession.json'
-                //            url: localUrl
-        }).success(function (data) {
-            if (data.state == 0) {
-                var localUserInfo = JSON.parse(localStorage.getItem('userInfo'));
-                $http({
-                    url: 'json/validSession.json'
-                        //                    url: localUrl
-                }).success(function (data) {
-                    $cookies.put('userInfo', JSON.stringify(data.info));
-                }).error(function () {
-                    $state.go('login');
-                });
-            }
-        })
-    })
 })

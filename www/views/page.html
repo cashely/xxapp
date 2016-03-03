@@ -1,5 +1,5 @@
 <!--<div class="modal" ng-controller="pageController">-->
-<ion-view view-title="{{post.title}}">
+<ion-view view-title="{{post.topic}}">
     <ion-nav-bar align-title="left" class="bar-positive">
         <ion-nav-buttons side="left">
             <button class="button back-button buttons  button-clear header-item" ng-click="goBack()">
@@ -8,7 +8,8 @@
         </ion-nav-buttons>
         <ion-nav-buttons side="right">
             <button class="button"><i class="icon fa fa-share"></i></button>
-            <button class="button" ng-click="goBack()"><i class="icon energized ion-ios-pricetags"></i></button>
+            <button class="button" ng-click="addCollected()" ng-hide="post.collected"><i class="icon ion-ios-pricetags"></i></button>
+            <button class="button" ng-click="cancelCollected()" ng-show="post.collected"><i class="icon energized ion-ios-pricetags"></i></button>
             <!--            <button class="button"><i class="icon fa" ng-class="{true:'fa-folder-open-o',false:'fa-folder-o'}[post.isRead]"></i></button>-->
             <button class="button" ng-click="showPageSheet()"><i class="icon ion-more"></i></button>
         </ion-nav-buttons>
@@ -16,32 +17,16 @@
     <ion-side-menus>
         <ion-side-menu width="200" side="left">
             <ul class="list has-header">
-                <li class="item">
-                    <h2>历史信息菜单</h2>
-                    <p>Back off, man. I'm a scientist.</p>
-                    <span class="item-note">12-12</span>
-                </li>
-                <li class="item">
-                    <h2>历史信息菜单</h2>
-                    <p>Back off, man. I'm a scientist.</p>
-                </li>
-                <li class="item">
-                    <h2>历史信息菜单</h2>
-                    <p>Back off, man. I'm a scientist.</p>
-                </li>
-                <li class="item">
-                    <h2>历史信息菜单</h2>
-                    <p>Back off, man. I'm a scientist.</p>
-                </li>
-                <li class="item">
-                    <h2>历史信息菜单</h2>
-                    <p>Back off, man. I'm a scientist.</p>
+                <li class="item" ng-repeat="history in postHistory">
+                    <h2>{{post[1]}}</h2>
+                    <p>{{post[5]}}</p>
+                    <span class="item-note">{{post[11]}}</span>
                 </li>
             </ul>
         </ion-side-menu>
         <ion-side-menu-content>
             <ion-content has-bouncing="false">
-                <div class="padding">
+                <div class="padding page-cotent" ng-bind-html="post.content">
                     {{post.content}}
                 </div>
                 <ul class="list">
@@ -49,22 +34,27 @@
                         评论
                         <span class="badge badge-assertive"></span>
                     </li>
-                    <li class="item item-avatar" ng-repeat="commentList in post.comment" href="#">
+                    <li class="item item-avatar" ng-repeat="comment in commentList" href="#">
                         <img src="img/default-40-40.png">
-                        <h2>{{commentList.name}}</h2>
-                        <p>{{commentList.content}}</p>
+                        <h2>{{comment[1]}}</h2>
+                            <div class="item-footer">
+                            <span class="item-time">{{comment[3]}}</span>
+                            <span>{{comment[6]}}</span>
+                        </div>
                     </li>
                 </ul>
             </ion-content>
             <ion-footer-bar class="item-input-inset bar-stable">
                 <label class="item-input-wrapper">
                     <i class="icon ion-compose placeholder-icon"></i>
-                    <input type="text" placeholder="说两句吧..." ng-model="commentInput">
+                    <input type="text" placeholder="说两句吧..." id="commentInput" value='{{commentInput}}' ng-model="commentInput">
                 </label>
-                <button style="width:40px;" class="button button-positive button-clear">
+                <button  ng-hide="commentInput.length > 0" style="width:40px;" class="button button-positive button-clear">
                     <!--            <span class="badge badge-assertive">-->
-                    <span ng-hide="commentInput.length > 0" class="badge badge-positive">{{(post.comment).length}}</span>
-                    <span ng-show="commentInput.length>0">发表</span>
+                    <span class="badge badge-positive">{{commentList.length || 0}}</span>
+                </button>
+                <button  ng-show="commentInput.length > 0" style="width:40px;" class="button button-positive button-clear" ng-click="pushComment(commentInput)">
+                    <span>发表</span>
                     <!--            </span>-->
                 </button>
 

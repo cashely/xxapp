@@ -19,7 +19,12 @@ angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', '
             .state('index', {
                 abstract: true,
                 url: '/index',
-                templateUrl: 'views/index.html'
+                templateUrl: 'views/index.html',
+                controller:function($state){
+                    if(localStorage.getItem('autoLogin') == 0 || !localStorage.getItem('token')){
+                        $state.go('login');
+                    }
+                }
             })
             .state('index.home', {
                 url: '/home',
@@ -27,16 +32,6 @@ angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', '
                     'index-home': {
                         templateUrl: 'views/index-home.html',
                         controller: 'homeController'
-                    }
-                }
-            })
-            //首页政策解读
-            .state('index.home-zcjd', {
-                url: '/home/zcjd',
-                views: {
-                    'index-home': {
-                        templateUrl: 'views/classify-zcjd.html',
-                        controller: 'zcjdController'
                     }
                 }
             })
@@ -50,13 +45,46 @@ angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', '
                     }
                 }
             })
-            //首页招标信息
+            //首页招标信息&&政策解读
             .state('index.home-xx', {
-                url: '/home/xx/:type',
+                url: '/home/xx/:type/:id',
                 views: {
                     'index-home': {
-                        templateUrl: 'views/classify-xx.html?wewqe',
-                        controller: 'xxController'
+                        templateUrl: 'views/classify-xx.html',
+                        controller: function($scope, $rootScope, $state, $stateParams, $http){
+                            $scope.type = $state.params.type;
+                            $scope.share = function (msg) {
+                                window.plugins.socialsharing.share(msg);
+                            }
+                            $http({
+                                url: httpAddress + 'app/bid/getArticles.do',
+                                method:'POST',
+                                params:{
+                                    "params[root_type]":$state.params.id,
+                                    APPCLIENTID:$rootScope.APPCLIENTID
+                                }
+                            }).success(function (res) {
+                                if(res.success){
+                                    $scope.xxlist = res.data.rows.slice(1);
+                                }
+                            })
+                            //获取按文章分类
+                            $http({
+                                url: httpAddress + 'app/bid/childrenTypes.do',
+                                method: 'POST',
+                                params:{
+                                    root_type:$state.params.id,
+                                    APPCLIENTID:$rootScope.APPCLIENTID
+                                }
+                            }).success(function(res){
+                                if(res.success){
+                                    $scope.articleTypeList = res.data.slice(1);
+                                    console.log($scope.articleTypeList);
+                                }
+                            }).error(function(res){
+                                ajaxFail();
+                            })
+                        }
                     }
                 }
             })
@@ -76,12 +104,12 @@ angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', '
                 views: {
                     'index-home': {
                         templateUrl: 'views/member-collect.html',
-                        controller: 'indexcollectController'
+                        controller: 'collectController'
                     }
                 }
             })
             .state('index.home-collect-xx', {
-                url: '/home/collect/xx/:title',
+                url: '/home/collect/xx/:title/:id',
                 views: {
                     'index-home': {
                         templateUrl: 'views/classify-xx.html?232',
@@ -166,7 +194,16 @@ angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', '
                 views: {
                     'index-member': {
                         templateUrl: 'views/member-collect.html',
-                        controller: 'classifyController'
+                        controller: 'collectController'
+                    }
+                }
+            })
+            .state('index.member-collect-xx', {
+                url: '/member/collect/xx/:title/:id',
+                views: {
+                    'index-member': {
+                        templateUrl: 'views/classify-xx.html?232',
+                        controller: 'xxController'
                     }
                 }
             })
@@ -262,7 +299,8 @@ angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', '
                 url: '/form',
                 views: {
                     'reg': {
-                        templateUrl: 'views/reg-form.html'
+                        templateUrl: 'views/reg-form.html',
+                        controller:'regFormController'
                     }
                 }
             })
@@ -275,7 +313,9 @@ angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', '
                     "direction": "up"
                 },
                 templateUrl: 'views/page.html',
-                controller: function ($scope, $state, $http, $ionicNavBarDelegate,$ionicActionSheet,$ionicSideMenuDelegate) {
+                controller: function ($scope,$rootScope, $state, $http, $ionicNavBarDelegate,$ionicActionSheet,$ionicSideMenuDelegate) {
+                    $scope.commentList =[];
+                    $scope.commentInput = '';
                     $scope.goBack = function () {
                         if($ionicSideMenuDelegate.isOpenLeft()){
                             $ionicNavBarDelegate.back();    
@@ -284,11 +324,118 @@ angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', '
                         }
                         
                     };
+                    // 获取文章内容
                     $http({
-                        url: 'json/post.json?' + new Date()
-                    }).success(function (data) {
-                        $scope.post = data;
+                        url: httpAddress + 'app/bid/getArticle.do',
+                        method:'POST',
+                        params:{
+                            id:$state.params.id,
+                            APPCLIENTID:$scope.APPCLIENTID
+                        },
+                        cache:false
+                    }).success(function (res) {
+                        console.log(res.data);
+                        if(res.success){
+                            $scope.post = res.data;
+                        }
                     });
+                    // 获取项目历史
+                    $http({
+                        url: httpAddress + 'app/bid/refArticles.do',
+                        method:'POST',
+                        params:{
+                            "params[id]":$state.params.id,
+                            APPCLIENTID:$scope.APPCLIENTID
+                        }
+                    }).success(function(res){
+                        $scope.postHistory = res.data.rows.slice(1);
+                    }).error(function(res){
+                        ajaxFail();
+                    });
+                    // 获取评论
+                    $http({
+                        url:httpAddress + 'app/bid/getComments.do',
+                        params:{
+                            "params[aid]":$state.params.id,
+                            APPCLIENTID:$scope.APPCLIENTID
+                        },
+                        method:'POST'
+                    }).success(function(res){
+                        if(res.success){
+                            $scope.commentList = res.data.rows.slice(1);
+                        }
+                    });
+                    // 添加收藏
+                    $scope.addCollected = function(){
+                        console.log($state.params.id);
+                        $http({
+                            url:httpAddress + 'app/bid/collect.do',
+                            params:{
+                                infoId:$state.params.id,
+                                APPCLIENTID:$scope.APPCLIENTID
+                            },
+                            method:'POST'
+                        }).success(
+                            // success
+                            function(res){
+                                if(res.success){
+                                    $scope.post.collected = true;
+                            }
+                        }).error(
+                            // fail
+                            function(res){
+                                ajaxFail();
+                        });
+                    }
+                    $scope.cancelCollected = function(num){
+                        $http({
+                            url:httpAddress + 'app/bid/removeCollection.do',
+                            params:{
+                                infoId:$state.params.id,
+                                APPCLIENTID:$scope.APPCLIENTID
+                            },
+                            method:'POST'
+                        }).success(
+                                // success
+                                function(res){
+                                    if(res.success){
+                                        $scope.post.collected = false;
+                                    }
+                                },
+                                // fail
+                                function(res){
+                                    ajaxFail();
+                                });
+                    }
+                    // 发表评论
+                    $scope.pushComment = function(text){
+                        $http({
+                            url: httpAddress + 'app/bid/comment.do',
+                            method:'POST',
+                            params:{
+                                msg_id:$state.params.id,
+                                APPCLIENTID:$scope.APPCLIENTID,
+                                content:text
+                            }
+                        }).success(function(res){
+                            if(res.success){
+                                $http({
+                                    url:httpAddress + 'app/bid/getComments.do',
+                                    params:{
+                                        "params[aid]":$state.params.id,
+                                        APPCLIENTID:$scope.APPCLIENTID
+                                    },
+                                    method:'POST'
+                                }).success(function(res){
+                                    if(res.success){
+                                        $scope.commentList = res.data.rows.slice(1);
+                                    }
+                                });
+                            }
+                        }).error(function(res){
+                            ajaxFail();
+                        })
+                    }
                     $scope.showPageSheet = function () {
                         $ionicActionSheet.show({
                             buttons: [
@@ -326,6 +473,6 @@ angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', '
                     }
                 }
             });
-//        $urlRouterProvider('/login');
+
         $urlRouterProvider.otherwise('/login');
     })

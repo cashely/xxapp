@@ -1,17 +1,20 @@
 <ion-view view-title="登录">
-    <ion-content>
+    <ion-content style="backgrund-color:#f2f2f2">
+        <div class="logo">
+            <img ng-src="img/logo.png" width="120">
+        </div>
         <div class="list list-inset">
             <label class="item item-input">
                 <i class="icon fa fa-user placeholder-icon"></i>
-                <input type="text" ng-model="username" class="userName" placeholder="Name">
+                <input type="text" ng-model="username" value="{{username}}" class="userName" placeholder="请输入账号">
             </label>
             <label class="item item-input">
                 <i class="icon fa fa-lock placeholder-icon"></i>
-                <input type="password" ng-model="password" class="passWord" placeholder="Password">
+                <input type="password" ng-model="password" value="{{password}}" class="passWord" placeholder="密码">
             </label>
         </div>
         <div class="padding">
-            <button class="button button-positive button-block" ng-click="validAcccount()">登 录</button>
+            <button class="button button-positive button-block" ng-click="validAcccount(username,password)">登 录</button>
         </div>
         <div class="padding text-right"><a ui-sref="reg.code">没有帐号？注册</a></div>
     </ion-content>
