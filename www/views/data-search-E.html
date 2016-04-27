@@ -1,0 +1,29 @@
+<ion-view view-title="{{title}}" ng-controller="getTitleController">
+    <ion-content class="has-header" ng-controller="dataSearchTypesController">
+        <div class="list">
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    排名项
+                </div>
+                <select ng-model="dataSearch.sortName" ng-change="getZxfl()">
+                    <option value="{{item}}" ng-repeat="item in sortNameList">{{item}}</option>
+                </select>
+            </label>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    中西分类
+                </div>
+                <select ng-disabled="!dataSearch.sortName" ng-model="dataSearch.zxFl">
+                    <option ng-repeat="item in zxFlList" value="{{item}}">{{item}}</option>
+                </select>
+                
+            </label>
+            <label class="item item-input">
+                <span class="input-label">生产企业</span>
+                <input type="text" ng-focus="hideEnteList = false;getEnte()" ng-model="dataSearch.ente" placeholder="请输入生产企业">
+            </label>
+            <div class="item" ng-hide="hideEnteList" on-tap="dataSearch.ente = item;hideEnteList = true" ng-repeat="item in enteList | filter:dataSearch.ente">{{item}}</div>
+            <button on-tap="actionDataSearch('E')" ng-disabled="!dataSearch.sortName && !dataSearch.zxFl" class="button button-block button-positive"><i class="icon ion-search"></i> 查询</button>
+        </div>
+    </ion-content>
+</ion-view>

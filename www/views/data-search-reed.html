@@ -1,0 +1,27 @@
+<div class="modal">
+    <ion-header-bar align-title="left" class="bar-positive">
+        <div class="buttons">
+            <button class="button button-clear" ng-click="hideReedModal()">
+                <i class="icon ion-ios-arrow-back"></i>
+            </button>
+        </div>
+        <h1 class="title">{{title + '+' + dataSearch.province + '+' + dataSearch.project + '+' + dataSearch.medName + '+' + dataSearch.dosage + '+' + dataSearch.spec + '+' + dataSearch.ente}}</h1>
+    </ion-header-bar>
+    <ion-content class="has-header">
+        <table width="100%" class="table-row">
+            <tr>
+                <th width="20%">产品类型</th>
+                <th width="20%">规格</th>
+                <th width="30%">生产企业</th>
+                <th width="30%">批准文号</th>
+            </tr>
+            <tr ng-repeat="item in reedList">
+                <td>{{item[0]}}</td>
+                <td>{{item[1]}}</td>
+                <td>{{item[2]}}</td>
+                <td>{{item[3]}}</td>
+            </tr>
+        </table>
+        <div class="padding text-center" style="color:#696969">搜索结果共 {{reedList.length}} 条</div>
+</ion-content>
+</div>

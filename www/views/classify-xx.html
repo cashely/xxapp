@@ -1,18 +1,16 @@
-<ion-view view-title="{{type}}">
+<ion-view view-title="{{type}}" ng-controller="getClassifyController">
     <ion-nav-bar align-title="left" class="bar-positive">
         <ion-nav-back-button></ion-nav-back-button>
         <ion-nav-buttons side="right">
-            <button class="button">
+            <button class="button" ng-if="isReadPage">
                 <i class="icon ion-email-unread"></i>
+                <span class="badge">{{unreadTotal}}</span>
             </button>
             <button class="button">
-                <i class="icon ion-folder"></i>
+                已读
             </button>
             <button class="button" ng-click="openSearchModal()">
                 <i class="icon ion-ios-search-strong"></i>
-            </button>
-            <button class="button">
-                <i class="icon ion-more"></i>
             </button>
         </ion-nav-buttons>
     </ion-nav-bar>
@@ -20,25 +18,25 @@
         <div class="bar bar-stable bar-subheader">
             <div class="row select-box">
                 <div class="col item-input item-select" style="line-height:32px;">
-                    <select>
-                        <option selected>时间</option>
-                        <option>上月</option>
-                        <option>上周</option>
-                        <option>2016年1月21日 昨天</option>
-                        <option>2016年1月21日 今天</option>
-                        <option>2016年1月22日 明天</option>
+                    <select ng-model='opt.date' ng-change="changeOption()">
+                        <option value="" selected="selected" >全部</option>
+                        <option value="TD">今天</option>
+                        <option value="YD">昨天</option>
+                        <option value="LW">上周</option>
+                        <option value="LM">上月</option>
                     </select>
                 </div>
                 <div class="col item-input item-select" ng-controller="provinceController">
-                    <select>
-                        <option>省份</option>
-                        <option ng-repeat="province in provinces">{{province[1]}}</option>
+                    <select ng-model='opt.provice' ng-change="changeOption()">
+                        <option value="N/A">全国</option>
+                        
+                        <option value="{{province[0]}}" ng-repeat="province in provinces">{{province[1]}}</option>
                     </select>
                 </div>
                 <div class="col item-input item-select">
-                    <select>
-                        <option>文章类型</option>
-                        <option ng-repeat="articleType in articleTypeList" ng-value="{{articleType[0]}}">{{articleType[1]}}</option>
+                    <select ng-model="opt.type" ng-change="changeOption()">
+                        <option value="">全部</option>
+                        <option ng-repeat="articleType in articleTypeList" value="{{articleType[0]}}">{{articleType[1]}}</option>
                     </select>
                 </div>
             </div>
@@ -46,7 +44,7 @@
         <ion-content class="has-subheader">
             
             <ion-list>
-                <ion-item class="item-avatar" ui-sref="page({id:item[0]})" ng-repeat="item in xxlist">
+                <ion-item class="item-avatar" on-tap="showPageModal(item[0])" ng-repeat="item in xxlist">
                     <img ng-src="{{item.img || 'img/default-40-40.png'}}">
                     <h2>{{item[1]}}</h2>
                     <p>{{item[5]}}</p>
@@ -62,11 +60,13 @@
                         <span ng-show="item[7] == 3"><i class="ion royal ion-record"></i></span>
                         <span  ng-show="item[7] == 5"><i class="ion assertive ion-record"></i></span>
                         <span><i class="ion ion-ios-pricetags" ng-class="{'energized':item[8]}"></i></span>
-                        <span><i class="ion ion-ios-eye-outline"></i>12</span>
-                        <span><i class="ion ion-ios-compose-outline"></i>13</span>
+                        <span><i class="ion ion-ios-eye-outline"></i>{{item[9]}}</span>
+                        <span><i class="ion ion-ios-compose-outline"></i>{{item[10]}}</span>
                     </div>
                 </ion-item>
             </ion-list>
+            <ion-infinite-scroll ng-if="isScroll" on-infinite="loadMoreClassifyxx()" distance="1%">
+            </ion-infinite-scroll>
         </ion-content>
     </ion-pane>
 </ion-view>

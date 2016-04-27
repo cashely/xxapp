@@ -1,0 +1,51 @@
+<ion-view view-title="数据查询">
+    <ion-content class="has-header" ng-controller="dataSearchController">
+        <div class="list">
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    分类
+                </div>
+                <select ng-model="dataSearch.code" ng-change="changeCode()">
+                    <option value="E1">工信部行业排名</option>
+                    <option value="D1" selected>中标数据查询</option>
+                    <option value="ZH">综合查询</option>
+                    <option value="A1">基药目录</option>
+                    <option value="B1">医保目录</option>
+                    <option value="B2">新农合目录</option>
+                    <option value="B3">低价药目录</option>
+                    <option value="A2">妇儿专科用药目录</option>
+                    <option value="A3">急抢救用药目录</option>
+                    <option value="A4">辅助用药目录</option>
+                    <option value="C1">注册产品</option>
+                </select>
+            </label>
+            <label ng-show="dataSearch.code.indexOf('A') != -1 || dataSearch.code.indexOf('B') != -1" class="item item-input item-select">
+                <div class="input-label">
+                    版本
+                </div>
+                <select ng-model="dataSearch.vCat">
+                    <option>Blue</option>
+                    <option value="{{item[0]}}" ng-repeat="item in vCat">{{item[1]}}</option>
+                </select>
+            </label>
+            <label ng-show="dataSearch.code.indexOf('A') != -1 || dataSearch.code.indexOf('B') != -1" disable="dataSearch.vCat == ''" class="item item-input item-select">
+                <div class="input-label">
+                    版本
+                </div>
+                <select ng-model="dataSearch.province">
+                    <option>Blue</option>
+                    <option value="{{item[0]}}" ng-repeat="item in dataSearchProvince">{{item[1]}}</option>
+                </select>
+            </label>
+            <label ng-show="dataSearch.code.indexOf('A') != -1 || dataSearch.code.indexOf('B') != -1" class="item item-input item-select">
+                <div class="input-label">
+                    版本
+                </div>
+                <select ng-model="dataSearch.province">
+                    <option>Blue</option>
+                    <option value="{{item[0]}}" ng-repeat="item in dataSearchProvince">{{item[1]}}</option>
+                </select>
+            </label>
+        </div>
+    </ion-content>
+</ion-view>

@@ -2,10 +2,15 @@
     <ion-pane>
         <ion-content has-bouncing="true" class="has-header has-tabs">
             <div class="index-row-box">
-                <div class="row" ng-repeat="list in classify.hotClassify">
-                    <div class="col" ng-repeat = "item in list">
-                        <button ui-sref="index.classify-xx({type:'{{item.title}}'})" class="button button-block button-balanced">
-                            {{item.title}}
+                <div class="row" ng-repeat="list in classify.T">
+                    <div ng-if="item[0] == 1" class="col" ng-repeat = "item in list">
+                        <button ui-sref="index.classify-xx({type:item[1],id:item[2]})" class="button button-block button-balanced">
+                            {{item[1]}}
+                        </button>
+                    </div>
+                    <div ng-if="item[0] == 2" class="col" ng-repeat = "item in list">
+                        <button ui-sref="index.classify-data" class="button button-block button-balanced">
+                            {{item[1]}}
                         </button>
                     </div>
                 </div>
@@ -14,7 +19,7 @@
                 <ion-item class="item item-divider">
                     分类导航
                 </ion-item>
-                <ion-item ng-repeat="item in classify.otherClassify" ui-sref="index.classify-xx({type:'{{item.title}}'})" class="item item-icon-right">{{item.title}}<i class="button-small item-note icon ion-ios-arrow-right"></i></ion-item>
+                <ion-item ng-repeat="item in classify.B" ui-sref="index.classify-xx({type:item[1],id:item[2]})" class="item item-icon-right">{{item[1]}}<i class="button-small item-note icon ion-ios-arrow-right"></i></ion-item>
             </ion-list>
         </ion-content>
     </ion-pane>

@@ -1,30 +1,31 @@
-<!--<div class="modal" ng-controller="pageController">-->
-<ion-view view-title="{{post.topic}}">
-    <ion-nav-bar align-title="left" class="bar-positive">
-        <ion-nav-buttons side="left">
-            <button class="button back-button buttons  button-clear header-item" ng-click="goBack()">
-                <i class="icon ion-ios-arrow-back"></i>
-            </button>
-        </ion-nav-buttons>
-        <ion-nav-buttons side="right">
-            <button class="button"><i class="icon fa fa-share"></i></button>
-            <button class="button" ng-click="addCollected()" ng-hide="post.collected"><i class="icon ion-ios-pricetags"></i></button>
-            <button class="button" ng-click="cancelCollected()" ng-show="post.collected"><i class="icon energized ion-ios-pricetags"></i></button>
-            <!--            <button class="button"><i class="icon fa" ng-class="{true:'fa-folder-open-o',false:'fa-folder-o'}[post.isRead]"></i></button>-->
-            <button class="button" ng-click="showPageSheet()"><i class="icon ion-more"></i></button>
-        </ion-nav-buttons>
-    </ion-nav-bar>
+<div class="modal" ng-controller="pageController as pageAll">
+<!-- <ion-view view-title="{{post.topic}}"> -->
     <ion-side-menus>
-        <ion-side-menu width="200" side="left">
-            <ul class="list has-header">
-                <li class="item" ng-repeat="history in postHistory">
-                    <h2>{{post[1]}}</h2>
-                    <p>{{post[5]}}</p>
-                    <span class="item-note">{{post[11]}}</span>
+        <ion-side-menu delegate-handle="pageSide" width="200" side="left">
+            <ul class="list">
+                <li on-tap="getPage(history[0])" class="item" ng-repeat="history in postHistory">
+                    <h2>{{history[1]}}</h2>
+                    <p>{{history[6]}}</p>
+                    <span class="item-note">{{post[7]}}</span>
                 </li>
             </ul>
         </ion-side-menu>
         <ion-side-menu-content>
+            <ion-header-bar align-title="left" class="bar-positive">
+                <div class="buttons">
+                    <button class="button button-clear" ng-click="hidePageModal()">
+                        <i class="icon ion-ios-arrow-back"></i>
+                    </button>
+                  </div>
+                  <h1 class="title">{{post.topic}}</h1>
+                  <div class="buttons">
+                    <button class="button" on-tap="sharePage()"><i class="icon fa fa-share"></i></button>
+                    <button class="button" ng-click="addCollected()" ng-hide="post.collected"><i class="icon ion-ios-pricetags"></i></button>
+                    <button class="button" ng-click="cancelCollected()" ng-show="post.collected"><i class="icon energized ion-ios-pricetags"></i></button>
+                    <!--            <button class="button"><i class="icon fa" ng-class="{true:'fa-folder-open-o',false:'fa-folder-o'}[post.isRead]"></i></button>-->
+                    <button class="button" ng-if="sheetShow" ng-click="showPageSheet()"><i class="icon ion-more"></i></button>
+                  </div>
+            </ion-header-bar>
             <ion-content has-bouncing="false">
                 <div class="padding page-cotent" ng-bind-html="post.content">
                     {{post.content}}
@@ -44,7 +45,7 @@
                     </li>
                 </ul>
             </ion-content>
-            <ion-footer-bar class="item-input-inset bar-stable">
+            <ion-footer-bar class="item-input-inset bar-stable" keyboard-attach>
                 <label class="item-input-wrapper">
                     <i class="icon ion-compose placeholder-icon"></i>
                     <input type="text" placeholder="说两句吧..." id="commentInput" value='{{commentInput}}' ng-model="commentInput">
@@ -53,7 +54,7 @@
                     <!--            <span class="badge badge-assertive">-->
                     <span class="badge badge-positive">{{commentList.length || 0}}</span>
                 </button>
-                <button  ng-show="commentInput.length > 0" style="width:40px;" class="button button-positive button-clear" ng-click="pushComment(commentInput)">
+                <button  ng-show="commentInput.length > 0" style="width:40px;position:relative;top:0;right:0;left:0;bottom:0;" class="button button-positive button-clear" ng-click="pushComment(commentInput)">
                     <span>发表</span>
                     <!--            </span>-->
                 </button>
@@ -62,5 +63,5 @@
 
         </ion-side-menu-content>
     </ion-side-menus>
-</ion-view>
-<!--</div>-->
+<!-- </ion-view> -->
+</div>

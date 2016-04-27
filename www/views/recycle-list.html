@@ -1,0 +1,69 @@
+<ion-view view-title="{{type}}">
+    <ion-nav-bar align-title="left" class="bar-positive">
+        <ion-nav-back-button></ion-nav-back-button>
+        <ion-nav-buttons side="right">
+            <button class="button" ng-if="isReadPage">
+                <i class="icon ion-email-unread"></i>
+                <span class="badge">{{unreadTotal}}</span>
+            </button>
+            <button class="button">
+                已读
+            </button>
+            <button class="button" ng-click="openSearchModal()">
+                <i class="icon ion-ios-search-strong"></i>
+            </button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-pane>
+        <div class="bar bar-stable bar-subheader">
+            <div class="row select-box">
+                <div class="col item-input item-select" style="line-height:32px;">
+                    <select ng-model='opt.date' ng-change="changeOption()">
+                        <option value="" selected="selected" >全部</option>
+                        <option value="TD">今天</option>
+                        <option value="YD">昨天</option>
+                        <option value="LW">上周</option>
+                        <option value="LM">上月</option>
+                    </select>
+                </div>
+                <div class="col item-input item-select">
+                    <select ng-model='opt.provice' ng-change="changeOption()">
+                        <option value="N/A">全国</option>
+                        
+                        <option value="{{province[0]}}" ng-repeat="province in provinces">{{province[1]}}</option>
+                    </select>
+                </div>
+                <div class="col item-input item-select">
+                    <select ng-model="opt.type" ng-change="changeOption()">
+                        <option value="">全部</option>
+                        <option ng-repeat="articleType in articleTypeList" value="{{articleType[0]}}">{{articleType[1]}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <ion-content class="has-subheader">
+            
+            <ion-list>
+                <ion-item class="item-avatar" ng-repeat="item in xxlist">
+                    <img ng-src="{{item.img || 'img/default-40-40.png'}}">
+                    <h2>{{item[1]}}</h2>
+                    <p>{{item[5]}}</p>
+                    <ion-option-button class="button-positive" on-tap="enableSub('{{item[0]}}')">
+                        <i class="icon ion-loop"></i>
+                    </ion-option-button>
+                    <div class="item-footer">
+                        <span class="item-time">{{item[6]}}</span>
+                        <span ng-show="item[7] == 1"><i class="ion ion-record"></i></span>
+                        <span ng-show="item[7] == 3"><i class="ion royal ion-record"></i></span>
+                        <span  ng-show="item[7] == 5"><i class="ion assertive ion-record"></i></span>
+                        <span><i class="ion ion-ios-pricetags" ng-class="{'energized':item[8]}"></i></span>
+                        <span><i class="ion ion-ios-eye-outline"></i>{{item[9]}}</span>
+                        <span><i class="ion ion-ios-compose-outline"></i>{{item[10]}}</span>
+                    </div>
+                </ion-item>
+            </ion-list>
+            <ion-infinite-scroll ng-if="isScroll" on-infinite="loadMoreClassifyxx()" distance="1%">
+            </ion-infinite-scroll>
+        </ion-content>
+    </ion-pane>
+</ion-view>

@@ -1,8 +1,8 @@
-<ion-view view-title="订阅">
+<ion-view view-title="订阅设置">
     <ion-pane>
         <ion-content has-bouncing="true" class="has-header has-tabs">
             <ion-list>
-                <ion-item ng-repeat="item in classify.otherClassify" ng-click="classifyState(item.title)" class="item item-icon-right">{{item.title}}<i class="button-small item-note icon ion-ios-arrow-right"></i></ion-item>
+                <ion-item on-tap="showTypeList(item[0])"  ng-repeat="item in subProvinces" value="{{item[0]}}" class="item item-icon-right">{{item[1]}}<span class="badge badge-assertive">{{item[2]}}</span></ion-item>
             </ion-list>
         </ion-content>
     </ion-pane>

@@ -1,0 +1,49 @@
+<ion-view view-title="{{title}}" ng-controller="getTitleController">
+    <ion-content class="has-header" ng-controller="dataSearchTypesController">
+        <div class="list">
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    省份
+                </div>
+                <select ng-model="dataSearch.province" ng-change="getProject()">
+                    <option ng-repeat="item in provinceList" value="{{item}}">{{item}}</option>
+                </select>
+            </label>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    项目
+                </div>
+                <select ng-disabled="!dataSearch.province" ng-model="dataSearch.project">
+                    <option ng-repeat="item in projectList" value="{{item}}">{{item}}</option>
+                </select>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">药品名称</span>
+                <input type="text" ng-focus="hideMedNameList = false;getMedName()" ng-model="dataSearch.medName" placeholder="请输入药品名称">
+            </label>
+            <div class="item" ng-hide="hideMedNameList" on-tap="dataSearch.medName = item;getDosage();hideMedNameList = true;" ng-repeat="item in medNameList | filter:dataSearch.medName">{{item}}</div>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    剂型
+                </div>
+                <select ng-model="dataSearch.dosage" ng-change="getSpec()">
+                    <option ng-repeat="item in dosageList" value="{{item}}">{{item}}</option>
+                </select>
+            </label>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    规格
+                </div>
+                <select ng-model="dataSearch.spec">
+                    <option ng-repeat="item in specList" value="{{item}}">{{item}}</option>
+                </select>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">生产企业</span>
+                <input type="text" ng-focus="hideEnteList = false;getEnte()" ng-model="dataSearch.ente" placeholder="请输入生产企业">
+            </label>
+            <div class="item" ng-hide="hideEnteList" on-tap="dataSearch.ente = item;hideEnteList = true" ng-repeat="item in enteList | filter:dataSearch.ente">{{item}}</div>
+            <button on-tap="actionDataSearch('D')" class="button button-block button-positive"><i class="icon ion-search"></i> 查询</button>
+        </div>
+    </ion-content>
+</ion-view>

@@ -5,12 +5,30 @@
         </div>
         <label class="item-input-wrapper">
             <i class="icon ion-ios-search placeholder-icon"></i>
-            <input type="search" autofocus id="search" placeholder="Search">
+            <input type="search" autofocus ng-model="searchStr" id="search" placeholder="Search">
         </label>
-        <button ng-click="searchAction()" class="button button-clear">
+        <button ng-click="search()" class="button button-clear">
             搜索
         </button>
     </ion-header-bar>
-    <ion-content class="padding">
+    <ion-content>
+        <ion-list>
+            <ion-item class="item-avatar" ng-repeat="post in searchList" on-tap="showPageModal(post[0])">
+                <img ng-src="{{post.img || 'img/default-40-40.png'}}">
+                <h2>{{post[1]}}</h2>
+                <p>{{post[5]}}</p>
+                <div class="item-footer">
+                    <span class="item-time">{{post[6]}}</span>
+                    <span ng-show="post[7] == 1"><i class="ion ion-record"></i></span>
+                    <span ng-show="post[7] == 3"><i class="ion royal ion-record"></i></span>
+                    <span  ng-show="post[7] == 5"><i class="ion assertive ion-record"></i></span>
+                    <span><i class="ion ion-ios-pricetags" ng-class="{'energized':post[8]}"></i></span>
+                    <span><i class="ion ion-ios-eye-outline"></i>12</span>
+                    <span><i class="ion ion-ios-compose-outline"></i>13</span>
+                </div>
+            </ion-item>
+        </ion-list>
+        <ion-infinite-scroll ng-if="isScroll" on-infinite="searchLoadMore()" distance="1%">
+        </ion-infinite-scroll>
     </ion-content>
 </div>

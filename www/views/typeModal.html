@@ -1,0 +1,20 @@
+<div class="modal" ng-controller="subTypeController">
+            <ion-header-bar align-title="left" class="bar-positive">
+                <div class="buttons">
+                    <button class="button button-clear" ng-click="hideTypeModal()">
+                        <i class="icon ion-ios-arrow-back"></i>
+                    </button>
+                  </div>
+                  <h1 class="title">请选择订阅类型</h1>
+                  <div class="buttons">
+                    <button class="button" ng-click="addType()">完成</button>
+                  </div>
+            </ion-header-bar>
+            <ion-content has-bouncing="false">
+                <form name="subTypesForm">
+                    <ion-list id="subTypes">
+                        <ion-checkbox ng-value="item[0]" ng-checked="item[2] > 0"  ng-repeat="item in types">{{item[1]}}</ion-checkbox>
+                    </ion-list>
+                </form>
+            </ion-content>
+</div>

@@ -1,0 +1,28 @@
+<div class="modal">
+    <ion-header-bar align-title="left" class="bar-positive">
+        <div class="buttons">
+            <button class="button button-clear" ng-click="hideDataSearchModal()">
+                <i class="icon ion-ios-arrow-back"></i>
+            </button>
+        </div>
+        <h1 class="title">{{title + '+' + dataSearch.medName + '+' + dataSearch.dosage + '+' + dataSearch.spec}}</h1>
+    </ion-header-bar>
+    <ion-content class="has-header" ng-controller="dataSearchTypesListController">
+        <table width="100%" class="table-row">
+            <tr>
+                <th>剂型</th>
+                <th>规格</th>
+                <th>注册中</th>
+                <th>已注册</th>
+            </tr>
+            <tr on-tap="actionDetail({{}})" ng-repeat="item in dataSearchTypesList">
+                
+                <td>{{item[1]}}</td>
+                <td><a href="javascript:void(0);" on-tap="actionReing('{{item[1]}}')">{{item[2]}}</a></td>
+                <td><a href="javascript:void(0);" on-tap="actionReed('{{item[1]}}')">{{item[3]}}</a></td>
+                <td>{{item[4]}}</td>
+            </tr>
+        </table>
+        <div class="padding text-center" style="color:#696969">搜索结果共 {{dataSearchTypesList.length}} 条</div>
+</ion-content>
+</div>

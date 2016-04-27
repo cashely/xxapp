@@ -2,10 +2,13 @@
     <ion-content class="has-header">
         <div class="list list-inset">
             <label class="item item-input">
-                <textarea placeholder="写点评价意见吧~~" style="min-height:100px"></textarea>
+                <textarea ng-model="idea.content" placeholder="写点评价意见吧~~" style="min-height:100px"></textarea>
+            </label>
+            <label class="item item-input">
+                <input placeholder="请留下您的联系方式~~" type="text" ng-model="idea.contact"/>
             </label>
 <!--            <div class="padding">-->
-                <button class="button button-block button-positive"><i class="icon ion-ios-compose-outline"></i> 提交</button>
+                <button on-tap="ideaAction()" class="button button-block button-positive"><i class="icon ion-ios-compose-outline"></i> 提交</button>
 <!--            </div>-->
         </div>
     </ion-content>

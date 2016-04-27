@@ -1,3 +1,9 @@
 <ion-view view-title="回收站">
-    
+    <ion-pane>
+        <ion-content has-bouncing="true" class="has-header has-tabs">
+            <ion-list>
+                <ion-item ng-repeat="item in recycleGroup"  ui-sref="index.member-recycle-xx({type:'回收站',id:item[0]})" class="item item-icon-right">{{item[1]}}<i class="button-small item-note icon ion-ios-arrow-right"></i></ion-item>
+            </ion-list>
+        </ion-content>
+    </ion-pane>
 </ion-view>

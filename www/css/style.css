@@ -128,3 +128,72 @@ ion-content {
     background-color: #1da0cb;
     text-align: center;
 }
+.bar-header .button{
+    position: relative;
+    background-color: transparent;
+}
+.bar-header .buttons-right .button{
+    margin: 0 5px;
+}
+.bar-header .button .badge{
+    position: absolute;
+    right:-5px;
+    z-index: 2;
+    padding: 0;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    top: 0px;
+    font-size: 8px;
+    border-radius: 10px;
+    color: #fff;
+    background-color: red;
+}
+.share > div{
+    line-height: 2;
+    font-size: 12px;
+}
+.share > div > span{
+    display: block;
+    width: 45px;
+    height: 45px;
+    margin: 0 auto;
+    border-radius: 100%;
+    background-size:60% 60%;
+}
+span.icon-qq{
+    background:url(../img/qq.png) center center no-repeat;
+}
+span.icon-wechat{
+    background:url(../img/wechat.png) center center no-repeat;
+}
+span.icon-qqzone{
+    background:url(../img/qqzone.png) center center no-repeat;
+}
+span.icon-wechat-friends{
+    background:url(../img/wechat-friends.png) center center no-repeat;
+}
+.button-icon-top{
+    line-height: 1.5;
+}
+.button-icon-top > i {
+    display: block;
+}
+.table-row{
+    text-align: center;
+    border-collapse: collapse;
+}
+.table-row th{
+    background-color: #f7f7f7;
+    font-weight: 500;
+}
+.table-row td{
+    background-color: #fff;
+}
+.table-row td,.table-row th{
+    
+    padding: 5px;
+    border: 1px solid #d1d1d1;
+}
