@@ -1,24 +1,26 @@
 <div class="modal" ng-controller="searchController">
     <ion-header-bar class="bar bar-positive item-input-inset">
         <div class="buttons">
-            <button class="button" ng-click="hideSearchModal()"><i class="icon ion-android-close"></i></button>
+            <button class="button button-clear" ng-click="hideSearchModal()"><i class="icon ion-ios-arrow-back"></i></button>
         </div>
         <label class="item-input-wrapper">
             <i class="icon ion-ios-search placeholder-icon"></i>
-            <input type="search" autofocus ng-model="searchStr" id="search" placeholder="Search">
+            <input type="text" ng-model="searchStr" id="search" placeholder="请输入搜索关键字"/>
         </label>
-        <button ng-click="search()" class="button button-clear">
+        <button on-tap="search()" class="button button-clear">
             搜索
         </button>
     </ion-header-bar>
     <ion-content>
         <ion-list>
             <ion-item class="item-avatar" ng-repeat="post in searchList" on-tap="showPageModal(post[0])">
-                <img ng-src="{{post.img || 'img/default-40-40.png'}}">
+                <img ng-src="http://testnapp.rype.cn/rype-app/app/bid/icon.do?id={{post[12]}}">
                 <h2>{{post[1]}}</h2>
                 <p>{{post[5]}}</p>
                 <div class="item-footer">
                     <span class="item-time">{{post[6]}}</span>
+                    <span ng-if="post[11] == 1">已读</span>
+                        <span ng-if="post[11] == 0">未读</span>
                     <span ng-show="post[7] == 1"><i class="ion ion-record"></i></span>
                     <span ng-show="post[7] == 3"><i class="ion royal ion-record"></i></span>
                     <span  ng-show="post[7] == 5"><i class="ion assertive ion-record"></i></span>

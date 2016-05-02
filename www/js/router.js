@@ -1,5 +1,5 @@
 angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', 'ionic-native-transitions'])
-    .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider) {
+    .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $cordovaInAppBrowserProvider) {
         $ionicConfigProvider.tabs.position('bottom');
         $ionicConfigProvider.navBar.alignTitle('center');
         $ionicConfigProvider.scrolling.jsScrolling(true);
@@ -203,7 +203,8 @@ angular.module('starter.router', ['ionic', 'starter.controllers', 'ngCordova', '
                 url: '/member',
                 views: {
                     'index-member': {
-                        templateUrl: 'views/index-member.html'
+                        templateUrl: 'views/index-member.html',
+                        controller: 'memberController'
                     }
                 }
             })

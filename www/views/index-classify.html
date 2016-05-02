@@ -4,13 +4,23 @@
             <div class="index-row-box">
                 <div class="row" ng-repeat="list in classify.T">
                     <div ng-if="item[0] == 1" class="col" ng-repeat = "item in list">
-                        <button ui-sref="index.classify-xx({type:item[1],id:item[2]})" class="button button-block button-balanced">
-                            {{item[1]}}
+                        <button ng-if="item[1]=='招标信息'" ui-sref="index.classify-xx({type:item[1],id:item[2]})" class="button button-block button-clear button-icon-top button-balanced">
+                            <i class="fa fa-legal fa-3x"></i>
+                            <span class="dark">{{item[1]}}</span>
+                        </button>
+                        <button ng-if="item[1]=='政策解读'" ui-sref="index.classify-xx({type:item[1],id:item[2]})" class="button button-block button-clear button-icon-top  button-energized">
+                            <i class="fa fa-book fa-3x"></i>
+                            <span class="dark">{{item[1]}}</span>
+                        </button>
+                        <button  ng-if="item[1]=='操作指引'" ui-sref="index.classify-xx({type:item[1],id:item[2]})" class="button button-block button-clear button-icon-top button-calm">
+                            <i class="fa fa-map-signs fa-3x"></i>
+                            <span class="dark">{{item[1]}}</span>
                         </button>
                     </div>
                     <div ng-if="item[0] == 2" class="col" ng-repeat = "item in list">
-                        <button ui-sref="index.classify-data" class="button button-block button-balanced">
-                            {{item[1]}}
+                        <button ui-sref="index.classify-data" class="button button-block button-clear button-icon-top button-royal">
+                            <i class="fa fa-search fa-3x"></i>
+                            <span class="dark">{{item[1]}}</span>
                         </button>
                     </div>
                 </div>

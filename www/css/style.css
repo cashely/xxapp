@@ -116,8 +116,13 @@ ion-content {
 }
 .item-footer span{
     margin: 0 5px;
+    display: inline-block;
+    
     line-height: 2;
     font-size: 12px;
+}
+.item-footer span.ng-binding{
+    min-width: 3rem;
 }
 .item-footer span.item-time{
     float: left;
@@ -196,4 +201,7 @@ span.icon-wechat-friends{
     
     padding: 5px;
     border: 1px solid #d1d1d1;
+}
+.bar-header .button.stable-border{
+    border-color: #b2b2b2!important;
 }

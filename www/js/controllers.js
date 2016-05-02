@@ -153,43 +153,55 @@ angular.module('starter.controllers', [])
         }
     })
     .controller('jgdhController', function ($scope, $rootScope, $cordovaGeolocation, $http, $ionicLoading, $ionicModal) {
-        $scope.province = '广州市';
+        $scope.province = '加载中';
         $ionicLoading.show({
             template: '<ion-spinner icon="spiral"></ion-spinner>正在获取位置'
         });
         var posOptions = {
-            timeout: 10000,
-            enableHighAccuracy: false
+            timeout: 5000,
+            enableHighAccuracy: true
         };
-        navigator.geolocation.getCurrentPosition(function (position) {
-            console.log(position + '地址');
-            var lat = position.coords.latitude;
-            var long = position.coords.longitude;
-            $rootScope.locationAddress = {
-                long: position.coords.latitude,
-                lat: position.coords.longitude
-            };
-            $ionicLoading.hide();
-            $http.jsonp('http://api.map.baidu.com/geocoder/v2/?ak=f4fgkNjsGDjU2BNT5tMPGTGn&location=' + lat + ',' + long + '&output=json&pois=1&callback=JSON_CALLBACK').success(function (info) {
-                console.log(info);
-                $scope.province = info.result.addressComponent.province;
-                $ionicLoading.hide();
-                $rootScope.JGposition = {
-                    longitude: long,
-                    latitude: lat
-                };
-            });
 
+        var geolocation = new BMap.Geolocation();
+        geolocation.getCurrentPosition(function (r) {
+            if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+                var position = new BMap.Marker(r.point);
+                var lat = position.point.lat;
+                var long = position.point.lng;
+                $rootScope.locationAddress = {
+                    long: position.point.lat,
+                    lat: position.point.lng
+                };
+                $ionicLoading.hide();
+                $http.jsonp('http://api.map.baidu.com/geocoder/v2/?ak=f4fgkNjsGDjU2BNT5tMPGTGn&location=' + lat + ',' + long + '&output=json&pois=1&callback=JSON_CALLBACK').success(function (info) {
+                    console.log(info);
+                    $scope.province = info.result.addressComponent.province;
+                    $ionicLoading.hide();
+                    $rootScope.JGposition = {
+                        longitude: long,
+                        latitude: lat
+                    };
+                    getAddressList();
+                });
+            } else {
+                alert('failed' + this.getStatus());
+            }
+        }, {
+            enableHighAccuracy: true
         });
 
         // 获取省份列表数据
         var getAddressList = function (address) {
             requestData('app/res/orgNav.do', {
-                provId: 'as',
+                provName: $scope.province.replace('省',''),
+                APPCLIENTID: $scope.APPCLIENTID
             }, function (res) {
+                console.log($scope.province);
                 console.log(res, '获取机构导航数据');
+                $scope.companyList = res.data.slice(1);
             })
-        }
+        };
+        
 
     })
     .controller('classifyController', function ($scope, $http, $state) {
@@ -298,30 +310,68 @@ angular.module('starter.controllers', [])
         //                            默认选择条件
         $scope.opt = {
             date: '',
-            provice: 'N/A',
+            provice: null,
             type: ''
         };
 
-        function reSet() {
+        function reSet(rd, im) {
+            var readVal = rd || '';
+            var importVal = im || '';
             page = 1;
             $scope.xxlist = [];
-            $scope.isScroll = true;
-            loadList();
+            loadList(readVal, importVal);
         }
+        $scope.buttonArray = {
+            important: '',
+            read: ''
+        };
+        $scope.actionAllImportant = function () {
+            $scope.buttonArray.important = '5';
+            reSet();
+        }
+
+        $scope.actionUngency = function () {
+            $scope.buttonArray.important = '3';
+            reSet();
+        };
+        $scope.actionImport = function () {
+            $scope.buttonArray.important = '';
+            reSet();
+        };
+
+        $scope.actionAllRead = function () {
+            $scope.buttonArray.read = '0';
+            reSet();
+        };
+        $scope.actionUnRead = function () {
+            $scope.buttonArray.read = '1';
+            reSet();
+        };
+        $scope.actionHasRead = function () {
+            $scope.buttonArray.read = '';
+            reSet();
+        };
+        $scope.actionAll = function () {
+            reSet();
+        };
         $scope.share = function (msg) {
             window.plugins.socialsharing.share(msg);
         }
         $scope.loadMoreClassifyxx = function () {
             loadList();
         };
-        var loadList = function () {
+        var loadList = function (rd, im) {
+            var importVal = im || '';
+            var readVal = rd || '';
             var params = {
                 pageNo: page,
-                root_type_id: $state.params.id,
+                "params[root_type_id]": $state.params.id,
                 APPCLIENTID: $rootScope.APPCLIENTID,
-                date_flag: $scope.opt.date,
-                info_area: $scope.opt.provice,
-                type_id: $scope.opt.type
+                "params[date_flag]": $scope.opt.date,
+                "params[info_area]": $scope.opt.provice,
+                "params[type_id]": $scope.opt.type,
+                "params[import_val]": importVal,
+                "params[read_flag]": readVal
             };
             requestData('app/bid/getCollections.do', params, function (res) {
                 if (res.success) {
@@ -331,8 +381,9 @@ angular.module('starter.controllers', [])
                     }
                     if ($scope.xxlist.length >= res.data.total) {
                         $scope.isScroll = false;
+                    }else{
+                        $scope.isScroll = true;
                     }
-
                     $scope.$broadcast('scroll.infiniteScrollComplete');
                     page++;
                 }
@@ -431,6 +482,7 @@ angular.module('starter.controllers', [])
     .controller('memberController', function ($scope, $cookies, $state) {
         $scope.loginOut = function () {
             $cookies.remove('userInfo');
+            console.log(22);
             localStorage.setItem('autoLogin', 0);
             $state.go('login');
         }
@@ -453,13 +505,12 @@ angular.module('starter.controllers', [])
             ps = 5;
         $scope.searchList = [];
         $scope.search = function () {
+            page = 1;
             $scope.searchList = [];
             $scope.isScroll = true;
-            console.log('查询字符串', $scope.searchStr);
+            $scope.searchLoadMore();
         }
         $scope.searchLoadMore = function () {
-            console.log('查询字符串', $scope.searchStr);
-
             $http({
                 url: httpAddress + 'app/bid/solr.do',
                 params: {
@@ -542,30 +593,69 @@ angular.module('starter.controllers', [])
         //                            默认选择条件
         $scope.opt = {
             date: '',
-            provice: 'N/A',
+            provice: '',
             type: ''
         };
 
-        function reSet() {
+        function reSet(rd, im) {
+            var readVal = rd || '';
+            var importVal = im || '';
             page = 1;
             $scope.xxlist = [];
-            $scope.isScroll = true;
-            loadList();
+            loadList(readVal, importVal);
+        };
+        $scope.buttonArray = {
+            important: '',
+            read: ''
+        };
+        $scope.actionAllImportant = function () {
+            $scope.buttonArray.important = '5';
+            reSet();
         }
+
+        $scope.actionUngency = function () {
+            $scope.buttonArray.important = '3';
+            reSet();
+        };
+        $scope.actionImport = function () {
+            $scope.buttonArray.important = '';
+            reSet();
+        };
+
+        $scope.actionAllRead = function () {
+            $scope.buttonArray.read = '0';
+            reSet();
+        };
+        $scope.actionUnRead = function () {
+            $scope.buttonArray.read = '1';
+            reSet();
+        };
+        $scope.actionHasRead = function () {
+            $scope.buttonArray.read = '';
+            reSet();
+        };
+        $scope.actionAll = function () {
+            reSet();
+        };
         $scope.share = function (msg) {
             window.plugins.socialsharing.share(msg);
         }
         $scope.loadMoreClassifyxx = function () {
             loadList();
+            console.log('22');
         };
-        var loadList = function () {
+        var loadList = function (rd, im) {
+            var readVal = rd || '';
+            var importVal = im || '';
             var params = {
                 pageNo: page,
                 "params[root_type]": $state.params.id,
                 APPCLIENTID: $rootScope.APPCLIENTID,
-                date_flag: $scope.opt.date,
-                info_area: $scope.opt.provice,
-                type_id: $scope.opt.type
+                "params[date_flag]": $scope.opt.date,
+                "params[info_area]": $scope.opt.provice,
+                "params[type_id]": $scope.opt.type,
+                "params[read_flag]": $scope.buttonArray.read,
+                "params[import_val": $scope.buttonArray.important
             };
             requestData('app/bid/getArticles.do', params, function (res) {
                 if (res.success) {
@@ -575,6 +665,8 @@ angular.module('starter.controllers', [])
                     }
                     if ($scope.xxlist.length >= res.data.total) {
                         $scope.isScroll = false;
+                    }else{
+                        $scope.isScroll = true;
                     }
                     $scope.$broadcast('scroll.infiniteScrollComplete');
                 }
@@ -622,30 +714,69 @@ angular.module('starter.controllers', [])
         //                            默认选择条件
         $scope.opt = {
             date: '',
-            provice: 'N/A',
+            provice: null,
             type: ''
         };
 
-        function reSet() {
+        function reSet(rd, im) {
+            var readVal = rd || '';
+            var importVal = im || '';
             page = 1;
             $scope.xxlist = [];
-            $scope.isScroll = true;
-            loadList();
+            loadList(readVal, importVal);
         }
+        $scope.buttonArray = {
+            important: '',
+            read: ''
+        };
+        $scope.actionAllImportant = function () {
+            $scope.buttonArray.important = '5';
+            reSet();
+        }
+
+        $scope.actionUngency = function () {
+            $scope.buttonArray.important = '3';
+            reSet();
+        };
+        $scope.actionImport = function () {
+            $scope.buttonArray.important = '';
+            reSet();
+        };
+
+        $scope.actionAllRead = function () {
+            $scope.buttonArray.read = '0';
+            reSet();
+        };
+        $scope.actionUnRead = function () {
+            $scope.buttonArray.read = '1';
+            reSet();
+        };
+        $scope.actionHasRead = function () {
+            $scope.buttonArray.read = '';
+            reSet();
+        };
+        $scope.actionAll = function () {
+            reSet();
+        };
         $scope.share = function (msg) {
             window.plugins.socialsharing.share(msg);
         }
         $scope.loadMoreClassifyxx = function () {
             loadList();
         };
-        var loadList = function () {
+        var loadList = function (rd, im) {
+            var importVal = im || '';
+            var readVal = rd || '';
             var params = {
                 pageNo: page,
-                root_type_id: $state.params.id,
+                "params[root_type_id]": $state.params.id,
                 APPCLIENTID: $rootScope.APPCLIENTID,
-                date_flag: $scope.opt.date,
-                info_area: $scope.opt.provice,
-                type_id: $scope.opt.type
+                "params[date_flag]": $scope.opt.date,
+                "params[info_area]": $scope.opt.provice,
+                "params[type_id]": $scope.opt.type,
+                "params[read_flag]": readVal,
+                "params[import_val]": importVal
+
             };
             requestData('app/bid/getSubscriptions.do', params, function (res) {
                 if (res.success) {
@@ -655,6 +786,8 @@ angular.module('starter.controllers', [])
                     }
                     if ($scope.xxlist.length >= res.data.total) {
                         $scope.isScroll = false;
+                    }else{
+                        $scope.isScroll = true;
                     }
                     $scope.$broadcast('scroll.infiniteScrollComplete');
                 }
@@ -674,7 +807,14 @@ angular.module('starter.controllers', [])
             });
         }
         unread();
-        //获取按文章分类
+
+        $scope.getUnreadList = function () {
+                page = 1;
+                $scope.xxlist = [];
+                $scope.isScroll = true;
+                loadList('0');
+            }
+            //获取按文章分类
         $http({
                 url: httpAddress + 'app/bid/subArtTypesGroup.do',
                 method: 'POST',
@@ -709,30 +849,68 @@ angular.module('starter.controllers', [])
         //                            默认选择条件
         $scope.opt = {
             date: '',
-            provice: 'N/A',
+            provice: null,
             type: ''
         };
 
-        function reSet() {
+        function reSet(rd, im) {
+            var readVal = rd || '';
+            var importVal = im || '';
             page = 1;
             $scope.xxlist = [];
-            $scope.isScroll = true;
-            loadList();
+            loadList(readVal, importVal);
+        };
+        $scope.buttonArray = {
+            important: '',
+            read: ''
+        };
+        $scope.actionAllImportant = function () {
+            $scope.buttonArray.important = '5';
+            reSet();
         }
+
+        $scope.actionUngency = function () {
+            $scope.buttonArray.important = '3';
+            reSet();
+        };
+        $scope.actionImport = function () {
+            $scope.buttonArray.important = '';
+            reSet();
+        };
+
+        $scope.actionAllRead = function () {
+            $scope.buttonArray.read = '0';
+            reSet();
+        };
+        $scope.actionUnRead = function () {
+            $scope.buttonArray.read = '1';
+            reSet();
+        };
+        $scope.actionHasRead = function () {
+            $scope.buttonArray.read = '';
+            reSet();
+        };
+        $scope.actionAll = function () {
+            reSet();
+        };
         $scope.share = function (msg) {
             window.plugins.socialsharing.share(msg);
         }
         $scope.loadMoreClassifyxx = function () {
             loadList();
         };
-        var loadList = function () {
+        var loadList = function (rd, im) {
+            var importVal = im || '';
+            var readVal = rd || '';
             var params = {
                 pageNo: page,
-                root_type_id: $state.params.id,
+                "params[root_type_id]": $state.params.id,
                 APPCLIENTID: $rootScope.APPCLIENTID,
-                date_flag: $scope.opt.date,
-                info_area: $scope.opt.provice,
-                type_id: $scope.opt.type
+                "params[date_flag]": $scope.opt.date,
+                "params[info_area]": $scope.opt.provice,
+                "params[type_id]": $scope.opt.type,
+                "params[read_flag]": readVal,
+                "params[import_val]": importVal
             };
             requestData('app/bid/getRecycledSubscriptions.do', params, function (res) {
                 if (res.success) {
@@ -742,6 +920,8 @@ angular.module('starter.controllers', [])
                     }
                     if ($scope.xxlist.length >= res.data.total) {
                         $scope.isScroll = false;
+                    }else{
+                        $scope.isScroll = true;
                     }
                     $scope.$broadcast('scroll.infiniteScrollComplete');
                 }
@@ -798,37 +978,12 @@ angular.module('starter.controllers', [])
     .controller('pageController', function ($scope, $rootScope, $timeout, $state, $http, $ionicNavBarDelegate, $ionicActionSheet, $ionicSideMenuDelegate) {
         $scope.commentList = [];
         $scope.commentInput = '';
-        $scope.goBack = function () {
-            console.log($scope.postHistory.length);
-            if ($scope.postHistory.length != 0) {
-                if ($ionicSideMenuDelegate.isOpenLeft()) {
-                    $ionicNavBarDelegate.back();
-                } else {
-                    $ionicSideMenuDelegate.toggleLeft();
-                }
-            } else {
-                $ionicNavBarDelegate.back();
-            }
-        };
+        $scope.showHistory = function () {
+            console.log(1);
+            $ionicSideMenuDelegate.$getByHandle('pageSide')._instances[0].toggleLeft();
+        }
         $scope.hidePageModal = function () {
-            if ($scope.postHistory.length != 0) {
-                // console.log($ionicSideMenuDelegate.$getByHandle('pageSide'));
-                if ($ionicSideMenuDelegate.$getByHandle('pageSide')._instances[0].isOpenLeft()) {
-                    $scope.pageModal.hide();
-                } else {
-                    $ionicSideMenuDelegate.$getByHandle('pageSide')._instances[0].toggleLeft();
-                    var clickHide = $timeout(function () {
-                        $scope.pageModal.hide();
-                    }, 2000);
-                    document.addEventListener('touchstart', function () {
-                        $timeout.cancel(clickHide);
-                    })
-
-                }
-            } else {
-                $scope.pageModal.hide();
-            }
-
+            $scope.pageModal.hide();
         }
         $rootScope.getPage = function (id) {
                 if ($state.$current.name == 'index.home-sub-xx') {
@@ -949,26 +1104,57 @@ angular.module('starter.controllers', [])
             })
         }
         $scope.showPageSheet = function () {
+            if ($state.$current.name == 'index.home-sub-xx') {
+                var sheet = $ionicActionSheet.show({
+                    destructiveText: '删除',
+                    titleText: '更多操作',
+                    cancelText: '取消',
+                    cancel: function () {
+                        // add cancel code..
+                        console.log('cancel');
+                    },
+                    destructiveButtonClicked: function () {
+                        requestData('app/bid/disableSubscription.do', {
+                            id: $scope.pageId,
+                            APPCLIENTID: $scope.APPCLIENTID
+                        }, function (res) {
+                            sheet();
+                            $scope.pageModal.hide();
+                            ajaxMsg('操作成功！');
+                        })
+                    }
+                });
+            } else {
+                var sheet = $ionicActionSheet.show({
+                    buttons: [
+                        {
+                            text: '项目历史'
+                        }
+                    ],
+                    titleText: '更多操作',
+                    cancelText: '取消',
+                    cancel: function () {
+                        // add cancel code..
+                        console.log('cancel');
+                    },
+                    buttonClicked: function (index) {
+                        if (index == 0) {
+                            if ($scope.postHistory.length != 0) {
+                                sheet();
+                                $ionicSideMenuDelegate.$getByHandle('pageSide')._instances[0].toggleLeft()
+                            } else {
+                                sheet();
+                                ajaxMsg('该项目暂无项目历史');
+                            }
+                        }
+                    }
 
-            var sheet = $ionicActionSheet.show({
-                destructiveText: '删除',
-                titleText: '更多操作',
-                cancelText: '取消',
-                cancel: function () {
-                    // add cancel code..
-                    console.log('cancel');
-                },
-                destructiveButtonClicked: function () {
-                    requestData('app/bid/disableSubscription.do', {
-                        id: $scope.pageId,
-                        APPCLIENTID: $scope.APPCLIENTID
-                    }, function (res) {
-                        sheet();
-                        $scope.pageModal.hide();
-                        ajaxMsg('操作成功！');
-                    })
-                }
-            });
+                });
+            }
+        };
+        //        打开url
+        $scope.openSource = function (url) {
+            window.open(url, '_blank');
         }
     })
     .controller('dateController', function () {
@@ -982,6 +1168,10 @@ angular.module('starter.controllers', [])
     //--数据查询类型
     .controller('dataSearchTypesController', function ($scope, $rootScope, $state, $ionicModal) {
         //    ----------页面标题
+        $scope.placeHolder = {
+            med: '请输入药品名称',
+            company: '请输入生产企业'
+        };
         $scope.title = $state.params.title;
         $scope.dataSearch = {
                 zxFl: '',
@@ -996,8 +1186,22 @@ angular.module('starter.controllers', [])
                 zxFl: '',
                 sortName: ''
             }
-            
-        console.log(2);
+            //        重置查询条件
+        $scope.reSetDataSearch = function () {
+            $scope.dataSearch = {
+                zxFl: '',
+                sortName: '',
+                ente: '',
+                vCat: '',
+                province: '',
+                project: '',
+                medName: '',
+                dosage: '',
+                spec: '',
+                zxFl: '',
+                sortName: ''
+            }
+        }
         var requestDateSearch = function (url, cb) {
             var callback = cb || function () {};
             requestData('app/query/' + url + '.do', {
@@ -1016,85 +1220,89 @@ angular.module('starter.controllers', [])
                 callback(res);
             })
         }
-        
+
         //获取排名项
         var getSortName = function () {
-            requestDateSearch('groupSortName',function(res){
+            requestDateSearch('groupSortName', function (res) {
                 $scope.sortNameList = res.data;
             });
         }
-        if($state.params.code == 'E1'){
+        if ($state.params.code == 'E1') {
             getSortName();
         }
-        
+
         //--获取省份
         var getProvince = function () {
-            requestDateSearch('groupProvince',function(res){
+            requestDateSearch('groupProvince', function (res) {
                 $scope.provinceList = res.data;
             });
         }
-        if($state.params.code == 'D1'){
+        if ($state.params.code == 'D1') {
             getProvince();
         }
-        $scope.getProvince = function(){
-            requestDateSearch('groupProvince',function(res){
-                $scope.provinceList = res.data;
-            });
-        }
-        //--获取版本
-        var getVcat = function(){
-            requestDateSearch('groupVCat',function(res){
+        $scope.getProvince = function () {
+                requestDateSearch('groupProvince', function (res) {
+                    $scope.provinceList = res.data;
+                });
+            }
+            //--获取版本
+        var getVcat = function () {
+            requestDateSearch('groupVCat', function (res) {
                 $scope.vCatList = res.data;
             });
         }
         console.log($state.params.code);
-        if($state.params.code == 'A2' || $state.params.code == 'A1' || $state.params.code == 'B1'|| $state.params.code == 'B2'|| $state.params.code == 'B3'|| $state.params.code == 'A3'|| $state.params.code == 'A4'){
+        if ($state.params.code == 'A2' || $state.params.code == 'A1' || $state.params.code == 'B1' || $state.params.code == 'B2' || $state.params.code == 'B3' || $state.params.code == 'A3' || $state.params.code == 'A4') {
             getVcat();
         }
         //--获取项目
         $scope.getProject = function () {
-            requestDateSearch('groupProject',function(res){
+            requestDateSearch('groupProject', function (res) {
                 $scope.projectList = res.data;
             });
         }
-        
+
         //--获取药品名称
         $scope.getMedName = function () {
-//            if($scope.dataSearch.medName.length > 4){
-                requestDateSearch('groupMedName',function(res){
+                $scope.placeHolder.med = '数据查询中...';
+                //            if($scope.dataSearch.medName.length > 4){
+                requestDateSearch('groupMedName', function (res) {
                     $scope.medNameList = res.data;
+                    $scope.placeHolder.med = '请输入药品名称';
                 });
-//            }
-        }
-        //--获取剂型
-        $scope.getDosage = function(){
-            requestDateSearch('groupDosage',function(res){
-                $scope.dosageList = res.data;
-            });
-        }
-        //--获取规格
-        $scope.getSpec = function(){
-            requestDateSearch('groupSpec',function(res){
-                $scope.specList = res.data;
-            });
-        }
-        //--获取生产企业
+                //            }
+            }
+            //--获取剂型
+        $scope.getDosage = function () {
+                requestDateSearch('groupDosage', function (res) {
+                    $scope.dosageList = res.data;
+                });
+            }
+            //--获取规格
+        $scope.getSpec = function () {
+                requestDateSearch('groupSpec', function (res) {
+                    $scope.specList = res.data;
+                });
+            }
+            //--获取生产企业
         $scope.getEnte = function () {
-//            if($scope.dataSearch.ente.length > 4){
-                requestDateSearch('groupEnte',function(res){
+                $scope.placeHolder.company = '数据查询中...';
+                //            if($scope.dataSearch.ente.length > 4){
+                requestDateSearch('groupEnte', function (res) {
+                    $scope.placeHolder.company = '请输入生产企业';
                     $scope.enteList = res.data;
                 });
-//            }
-        }
-        //--获取中西分类
+                //            }
+            }
+            //--获取中西分类
         $scope.getZxfl = function () {
-            requestDateSearch('groupZXFL',function(res){
+            requestDateSearch('groupZXFL', function (res) {
                 $scope.zxFlList = res.data;
             });
         }
-        
-        
-            
+
+
+
         //--------查询详细页面
         $scope.actionDataSearch = function (type) {
             var modal = $ionicModal.fromTemplateUrl('views/data-search-' + type + '-list.html', {
@@ -1109,8 +1317,8 @@ angular.module('starter.controllers', [])
         $scope.hideDataSearchModal = function () {
             $scope.dataSearchmodal.remove();
         }
-        
-        $scope.actionReed = function(num){
+
+        $scope.actionReed = function (num) {
             $ionicModal.fromTemplateUrl('views/data-search-reed.html', {
                 scope: $scope,
                 animation: 'slide-in-left'
@@ -1119,19 +1327,19 @@ angular.module('starter.controllers', [])
                 $scope.reedModal.show();
                 requestData('app/query/regestProd.do', {
                     APPCLIENTID: $scope.APPCLIENTID,
-                    id:num
+                    id: num
                 }, function (res) {
                     $scope.reedList = res.data.slice(1);
                 })
             });
-            
+
         };
-        $scope.hideReedModal = function(){
+        $scope.hideReedModal = function () {
             $scope.reedModal.remove();
         }
-        
-        
-        $scope.actionReing = function(num){
+
+
+        $scope.actionReing = function (num) {
             $ionicModal.fromTemplateUrl('views/data-search-reing.html', {
                 scope: $scope,
                 animation: 'slide-in-left'
@@ -1140,18 +1348,18 @@ angular.module('starter.controllers', [])
                 $scope.reingModal.show();
                 requestData('app/query/refProd.do', {
                     APPCLIENTID: $scope.APPCLIENTID,
-                    id:num
+                    id: num
                 }, function (res) {
                     $scope.reingList = res.data.slice(1);
                 })
             });
-            
+
         };
-        $scope.hideReingModal = function(){
+        $scope.hideReingModal = function () {
             $scope.reingModal.remove();
         }
-        
-        $scope.actionRefa = function(num){
+
+        $scope.actionRefa = function (num) {
             $ionicModal.fromTemplateUrl('views/data-search-ref-a.html', {
                 scope: $scope,
                 animation: 'slide-in-left'
@@ -1161,18 +1369,18 @@ angular.module('starter.controllers', [])
                 requestData('app/query/refProd.do', {
                     code: $state.params.code,
                     APPCLIENTID: $scope.APPCLIENTID,
-                    id:num
+                    id: num
                 }, function (res) {
                     $scope.refaList = res.data.slice(1);
                 })
             });
-            
+
         };
-        $scope.hideRefaModal = function(id){
+        $scope.hideRefaModal = function (id) {
             $scope.refaModal.remove();
         }
-        
-        $scope.actionRefb = function(num){
+
+        $scope.actionRefb = function (num) {
             $ionicModal.fromTemplateUrl('views/data-search-ref-b.html', {
                 scope: $scope,
                 animation: 'slide-in-left'
@@ -1187,52 +1395,51 @@ angular.module('starter.controllers', [])
                     $scope.refbList = res.data.slice(1);
                 })
             });
-            
+
         };
-        $scope.hideRefbModal = function(){
+        $scope.hideRefbModal = function () {
             $scope.refbModal.remove();
         }
-        
+
     })
-.controller('dataSearchRegistingController',function($scope,$state){
-    console.log($scope.dataSearch);
-})
-.controller('dataSearchRegistedController',function($scope,$state){
-    console.log($scope.dataSearch);
-})
-.controller('dataSearchRefController',function($scope,$state){
-})
-.controller('dataSearchTypesListController',function($scope,$state){
-    console.log($scope.dataSearch);
-    requestData('app/query/queryData.do',{
-        code: $state.params.code,
-        v_cat: $scope.dataSearch.vCat,
-        province: $scope.dataSearch.province,
-        project: $scope.dataSearch.project,
-        ente: $scope.dataSearch.ente,
-        med_name: $scope.dataSearch.medName,
-        dosage: $scope.dataSearch.dosage,
-        spec: $scope.dataSearch.spec,
-        zx_fl: $scope.dataSearch.zxFl,
-        sort_name: $scope.dataSearch.sortName,
-        APPCLIENTID: $scope.APPCLIENTID
-    },function(res){
-        $scope.dataSearchTypesList = res.data.slice(1);
-    });
-})
-.controller('getTitleController',function($scope,$state){
-    $scope.title = $state.params.title;
-})
+    .controller('dataSearchRegistingController', function ($scope, $state) {
+        console.log($scope.dataSearch);
+    })
+    .controller('dataSearchRegistedController', function ($scope, $state) {
+        console.log($scope.dataSearch);
+    })
+    .controller('dataSearchRefController', function ($scope, $state) {})
+    .controller('dataSearchTypesListController', function ($scope, $state) {
+        console.log($scope.dataSearch);
+        requestData('app/query/queryData.do', {
+            code: $state.params.code,
+            v_cat: $scope.dataSearch.vCat,
+            province: $scope.dataSearch.province,
+            project: $scope.dataSearch.project,
+            ente: $scope.dataSearch.ente,
+            med_name: $scope.dataSearch.medName,
+            dosage: $scope.dataSearch.dosage,
+            spec: $scope.dataSearch.spec,
+            zx_fl: $scope.dataSearch.zxFl,
+            sort_name: $scope.dataSearch.sortName,
+            APPCLIENTID: $scope.APPCLIENTID
+        }, function (res) {
+            $scope.dataSearchTypesList = res.data.slice(1);
+        });
+    })
+    .controller('getTitleController', function ($scope, $state) {
+        $scope.title = $state.params.title;
+    })
     .controller('shareController', function ($scope) {
-    console.log($scope.post);
+        console.log($scope.post);
         var shareInfo = {
-            url:'http://testnapp.rype.cn/ymbsn/front/bidInfo/view.do?id='+$scope.pageId,
-            title:$scope.post.topic + ' ' + $scope.post.createDate,
-            description:$scope.post.subject,
-            imageUrl:'http://ui.utimor.com/images/xxapp-icon.png',
-            appName:'招标进行时'
-        }
-        // 分线给QQ好友
+                url: 'http://testnapp.rype.cn/ymbsn/front/bidInfo/view.do?id=' + $scope.pageId,
+                title: $scope.post.topic + ' ' + $scope.post.createDate,
+                description: $scope.post.subject,
+                imageUrl: 'http://ui.utimor.com/images/xxapp-icon.png',
+                appName: '招标进行时'
+            }
+            // 分线给QQ好友
         $scope.shareQQ = function () {
             var args = {};
             args.url = shareInfo.url;

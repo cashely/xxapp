@@ -54,13 +54,22 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
         document.addEventListener("jpush.receiveMessage", Pusher.onReceiveMessage, false);
         // 获取通知内容
         document.addEventListener("jpush.receiveNotification", Pusher.onReceiveNotification, false);
+        window.plugins.jPushPlugin.getRegistrationID(onGetRegistradionID);
+        var onGetRegistradionID = function (data) {
+            try {
+                console.log("JPushPlugin:registrationID is " + data);
+                alert(data);
+            } catch (exception) {
+                console.log(exception);
+                alert(exception);
+            }
+        };
     });
     //    搜索模板
     $ionicModal.fromTemplateUrl('views/search.html', {
         scope: $rootScope,
-        focusfirstInput: true,
-        animation: 'slide-in-left',
-        focusFirstInput: true
+        focusFirstInput: true,
+        animation: 'slide-in-left'
     }).then(function (modal) {
         $rootScope.searchModal = modal;
     });
@@ -78,7 +87,9 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
     }).then(function (modal) {
         $rootScope.mapModal = modal;
     });
-    $rootScope.showMapModal = function (longg, latt) {
+    $rootScope.showMapModal = function (longg, latt, companyInfo) {
+        $rootScope.companyInfo = companyInfo;
+        console.log($rootScope.companyInfo);
         $rootScope.mapModal.show();
         //        手动指定地图显示区域的大小
         var mapDiv = $('#allmap');
@@ -187,7 +198,7 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
                 callback(res);
             }
         }).error(function () {
-            ajaxError();
+            ajaxMsg('操作错误');
         });
     }
 
@@ -238,9 +249,12 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
             var alertContent = null;
             if (pusher && ionic.Platform.isAndroid()) {
                 alertContent = pusher.openNotification.alert;
+                id = pusher.openNotification.extras.pageId;
             } else {
                 alertContent = event.aps.alert;
+                id = event.aps.pageId;
             };
+            alert(id);
         },
         onReceiveNotification: function (event) {
             if (ionic.Platform.isAndroid()) {

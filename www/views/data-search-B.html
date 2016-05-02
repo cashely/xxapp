@@ -19,7 +19,7 @@
             </label>
             <label class="item item-input">
                 <span class="input-label">药品名称</span>
-                <input type="text" ng-focus="hideMedNameList = false;getMedName()" ng-model="dataSearch.medName" placeholder="请输入药品名称">
+                <input type="text" ng-focus="hideMedNameList = false;getMedName()" ng-model="dataSearch.medName" placeholder="{{placeHolder.med}}">
             </label>
             <div class="item" ng-hide="hideMedNameList" on-tap="dataSearch.medName = item;getDosage();hideMedNameList = true;" ng-repeat="item in medNameList | filter:dataSearch.medName">{{item}}</div>
             <label class="item item-input item-select">
@@ -30,7 +30,10 @@
                     <option ng-repeat="item in dosageList" value="{{item}}">{{item}}</option>
                 </select>
             </label>
+            <div class="button-bar">
+                <button class="button button-positive button-block button-clear" on-tap="reSetDataSearch()">重置</button>
             <button on-tap="actionDataSearch('B')" class="button button-block button-positive"><i class="icon ion-search"></i> 查询</button>
+            </div>
         </div>
     </ion-content>
 </ion-view>

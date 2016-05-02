@@ -26,13 +26,6 @@
     },
     "cordova-plugin-wkwebview",
     "cordova-plugin-device",
-    {
-      "variables": {
-        "QQ_APP_ID": "1103461789"
-      },
-      "locator": "https://github.com/iVanPan/Cordova_QQ.git",
-      "id": "cn.jpush.phonegap.JPushPlugin"
-    },
     "cordova-plugin-inappbrowser"
   ],
   "cordovaPlatforms": [

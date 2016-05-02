@@ -12,40 +12,8 @@
     <ion-pane>
         <ion-content class="has-header">
             <ion-list>
-                <ion-item ng-click="showMapModal(32.1353040000,111.9891980000)" class="item item-icon-right">
-                    Hello
-                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
-                </ion-item>
-                <ion-item ng-click="showMapModal(30.1614850000,115.0500490000)" class="item item-icon-right">
-                    Hello
-                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
-                </ion-item>
-                <ion-item ng-click="showMapModal(31.7430870000,113.3459990000)" class="item item-icon-right">
-                    Hello
-                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
-                </ion-item>
-                <ion-item class="item item-icon-right">
-                    Hello
-                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
-                </ion-item>
-                <ion-item class="item item-icon-right">
-                    Hello
-                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
-                </ion-item>
-                <ion-item class="item item-icon-right">
-                    Hello
-                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
-                </ion-item>
-                <ion-item class="item item-icon-right">
-                    Hello
-                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
-                </ion-item>
-                <ion-item class="item item-icon-right">
-                    Hello
-                    <i class="button-small item-note icon ion-ios-arrow-right"></i>
-                </ion-item>
-                <ion-item class="item item-icon-right">
-                    Hello
+                <ion-item ng-repeat="item in companyList" ng-click="showMapModal(item[7],item[6],item)" class="item item-icon-right">
+                    {{item[1]}}
                     <i class="button-small item-note icon ion-ios-arrow-right"></i>
                 </ion-item>
             </ion-list>

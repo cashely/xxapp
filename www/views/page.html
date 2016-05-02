@@ -1,7 +1,7 @@
 <div class="modal" ng-controller="pageController as pageAll">
 <!-- <ion-view view-title="{{post.topic}}"> -->
     <ion-side-menus>
-        <ion-side-menu delegate-handle="pageSide" width="200" side="left">
+        <ion-side-menu ng-if="postHistory.length > 0" delegate-handle="pageSide" width="200" side="left">
             <ul class="list">
                 <li on-tap="getPage(history[0])" class="item" ng-repeat="history in postHistory">
                     <h2>{{history[1]}}</h2>
@@ -17,19 +17,26 @@
                         <i class="icon ion-ios-arrow-back"></i>
                     </button>
                   </div>
-                  <h1 class="title">{{post.topic}}</h1>
+                  <h1 class="title"></h1>
                   <div class="buttons">
+                      <button class="button" ng-if="postHistory.length > 0" on-tap="showHistory()"><i class="icon ion-ios-clock-outline"></i></button>
+                      <button class="button" ng-click="addCollected()" ng-hide="post.collected"><i class="fa fa-heart-o fa-lg"></i></button>
+                    <button class="button" ng-click="cancelCollected()" ng-show="post.collected"><i class="energized fa fa-heart-o fa-lg"></i></button>
                     <button class="button" on-tap="sharePage()"><i class="icon fa fa-share"></i></button>
-                    <button class="button" ng-click="addCollected()" ng-hide="post.collected"><i class="icon ion-ios-pricetags"></i></button>
-                    <button class="button" ng-click="cancelCollected()" ng-show="post.collected"><i class="icon energized ion-ios-pricetags"></i></button>
+                    
                     <!--            <button class="button"><i class="icon fa" ng-class="{true:'fa-folder-open-o',false:'fa-folder-o'}[post.isRead]"></i></button>-->
-                    <button class="button" ng-if="sheetShow" ng-click="showPageSheet()"><i class="icon ion-more"></i></button>
+                    <button class="button" ng-click="showPageSheet()"><i class="icon ion-more"></i></button>
                   </div>
             </ion-header-bar>
-            <ion-content has-bouncing="false">
-                <div class="padding page-cotent" ng-bind-html="post.content">
+            <ion-content class="padding" has-bouncing="false">
+                <h3 class="title text-center">{{post.topic}}</h3>
+                <div class="page-cotent" ng-bind-html="post.content">
+                    
                     {{post.content}}
+                    
                 </div>
+                <p ng-if="post.source_url">文章来源:<a href="javascript:void(0)" on-tap="openSource('{{post.source_url}}')">{{post.source}}</a></p>
+                <p ng-if="post.release">发布时间:{{post.release}}</p>
                 <ul class="list">
                     <li class="item item-divider">
                         评论
