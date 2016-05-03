@@ -8,10 +8,17 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
 .run(function ($ionicPlatform, Pusher, $rootScope, $ionicModal, $http, $cordovaNetwork, $ionicSideMenuDelegate, $cookies, $cordovaToast, $location, $state, $ionicPopup, $timeout) {
     //    httpAddress = 'http://172.19.8.160:9202/rype-app/';
     httpAddress = 'http://testnapp.rype.cn/rype-app/';
+    
     $ionicPlatform.ready(function () {
-        //禁止左侧菜单拖动
-        //        $ionicSideMenuDelegate.canDragContent(false);
-
+        Pusher.init();
+        // 清除bradge
+        Pusher.resetBradge();
+        // 获取通知内容
+        document.addEventListener("jpush.openNotification", Pusher.onOpenNotification, false);
+        // 获取自定义消息推送内容
+        document.addEventListener("jpush.receiveMessage", Pusher.onReceiveMessage, false);
+        // 获取通知内容
+        document.addEventListener("jpush.receiveNotification", Pusher.onReceiveNotification, false);
         if (window.cordova && window.cordova.plugins.Keyboard) {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -44,26 +51,6 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
                 $rootScope.netState = false;
             });
         });
-
-        Pusher.init();
-        // 清除bradge
-        Pusher.resetBradge();
-        // 获取通知内容
-        document.addEventListener("jpush.openNotification", Pusher.onOpenNotification, false);
-        // 获取自定义消息推送内容
-        document.addEventListener("jpush.receiveMessage", Pusher.onReceiveMessage, false);
-        // 获取通知内容
-        document.addEventListener("jpush.receiveNotification", Pusher.onReceiveNotification, false);
-        window.plugins.jPushPlugin.getRegistrationID(onGetRegistradionID);
-        var onGetRegistradionID = function (data) {
-            try {
-                console.log("JPushPlugin:registrationID is " + data);
-                alert(data);
-            } catch (exception) {
-                console.log(exception);
-                alert(exception);
-            }
-        };
     });
     //    搜索模板
     $ionicModal.fromTemplateUrl('views/search.html', {
@@ -231,7 +218,7 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
     };
 })
 
-.factory('Pusher', function ($ionicPopup, $state) {
+.factory('Pusher', function ($ionicPopup, $state,$rootScope) {
     var pusher = null;
     return {
         onReceiveMessage: function (event) {
@@ -247,14 +234,16 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
                 window.plugins.jPushPlugin.resetBadge();
             } //清除bradge
             var alertContent = null;
+            var id = null;
             if (pusher && ionic.Platform.isAndroid()) {
                 alertContent = pusher.openNotification.alert;
                 id = pusher.openNotification.extras.pageId;
             } else {
                 alertContent = event.aps.alert;
-                id = event.aps.pageId;
             };
-            alert(id);
+            if(id && id != ''){
+                $rootScope.showPageModal(id);
+            }
         },
         onReceiveNotification: function (event) {
             if (ionic.Platform.isAndroid()) {
@@ -264,7 +253,6 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
             }
 
             console.log('onReceiveNotification', alertContent);
-            alert('onReceiveNotification', alertContent);
         },
         getRegistradionID: function () {
             return localStorage.getItem('jPushID', null);
