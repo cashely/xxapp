@@ -44,7 +44,7 @@
             </label>
             <div class="item" ng-hide="hideEnteList" on-tap="dataSearch.ente = item;hideEnteList = true" ng-repeat="item in enteList | filter:dataSearch.ente">{{item}}</div>
             <div class="button-bar">
-                <button class="button button-positive button-block button-clear" on-tap="reSetDataSearch()">重置</button>
+                <button class="button button-positive button-block button-clear" on-tap="reSetDataSearch($event)">重置</button>
             <button on-tap="actionDataSearch('D')" class="button button-block button-positive"><i class="icon ion-search"></i> 查询</button>
             </div>
         </div>

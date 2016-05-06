@@ -5,9 +5,10 @@
                 <i class="icon ion-ios-arrow-back"></i>
             </button>
         </div>
-        <h1 class="title">{{title + '+' + dataSearch.sortName + '+' + dataSearch.zxFl + '+' + dataSearch.ente}}</h1>
+        <h1 class="title">查询结果</h1>
     </ion-header-bar>
     <ion-content class="has-header" ng-controller="dataSearchTypesListController">
+        <h3 class="title text-center">{{title + '+' + dataSearch.sortName + '+' + dataSearch.zxFl + '+' + dataSearch.ente}}</h3>
         <table width="100%" class="table-row">
             <tr>
                 <th width="30%">企业</th>
@@ -15,7 +16,7 @@
                 <th>中西分类</th>
                 <th>排名</th>
             </tr>
-            <tr ng-repeat="item in dataSearchTypesList">
+            <tr ng-repeat="item in dataSearchTypesList | orderBy: 'item[1]' : true">
                 <td>{{item[0]}}</td>
                 <td>{{item[1]}}</td>
                 <td>{{item[2]}}</td>

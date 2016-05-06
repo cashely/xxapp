@@ -1187,7 +1187,7 @@ angular.module('starter.controllers', [])
                 sortName: ''
             }
             //        重置查询条件
-        $scope.reSetDataSearch = function () {
+        $scope.reSetDataSearch = function ($event) {
             $scope.dataSearch = {
                 zxFl: '',
                 sortName: '',
@@ -1200,6 +1200,10 @@ angular.module('starter.controllers', [])
                 spec: '',
                 zxFl: '',
                 sortName: ''
+            };
+            var isInput = $($event.target).parents('.list').find('.input-label').eq(0).next();
+            if(isInput[0].localName == 'input'){
+                isInput.focus();
             }
         }
         var requestDateSearch = function (url, cb) {
