@@ -10,7 +10,7 @@
                 <ion-slide ng-repeat="item in hotImg">
                     <div class="box blue">
                         <div style="width:100%;height:157px" on-tap="showPageModal(item[1])">
-                            <img ng-src="http://testnapp.rype.cn/rype-app/app/bid/carouselImg.do?sn={{item[0]}}" />
+                            <img ng-src="http://bidi.rype.cn/rype-app/app/bid/carouselImg.do?sn={{item[0]}}" />
                         </div>
                     </div>
                 </ion-slide>
@@ -62,7 +62,7 @@
                     热门标题
                 </div>
                 <ion-item class="item-avatar" ng-repeat="post in hotPost" on-tap="showPageModal(post[0])">
-                    <img ng-src="http://testnapp.rype.cn/rype-app/app/bid/icon.do?id={{post[12]}}">
+                    <img ng-src="http://bidi.rype.cn/rype-app/app/bid/icon.do?id={{post[12]}}">
                     <h2>{{post[1]}}</h2>
                     <p>{{post[5]}}</p>
                     <div class="item-footer">

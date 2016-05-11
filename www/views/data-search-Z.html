@@ -1,4 +1,4 @@
-<ion-view view-title="{{title}}">
+<ion-view view-title="{{title}}" ng-controller="getTitleController">
     <ion-content class="has-header" ng-controller="dataSearchTypesController">
         <div class="list">
             <label class="item item-input">
@@ -29,7 +29,7 @@
             </label>
             <div class="button-bar">
                 <button class="button button-positive button-block button-clear" on-tap="reSetDataSearch($event)">重置</button>
-            <button on-tap="actionDataSearch('Z')" ng-disabled="!dataSearch.spec" class="button button-block button-positive"><i class="icon ion-search"></i> 查询</button>
+            <button on-tap="actionDataSearch('Z')" ng-disabled="!dataSearch.medName" class="button button-block button-positive"><i class="icon ion-search"></i> 查询</button>
             </div>
         </div>
     </ion-content>

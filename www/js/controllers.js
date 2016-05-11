@@ -1437,7 +1437,7 @@ angular.module('starter.controllers', [])
     .controller('shareController', function ($scope) {
         console.log($scope.post);
         var shareInfo = {
-                url: 'http://testnapp.rype.cn/ymbsn/front/bidInfo/view.do?id=' + $scope.pageId,
+                url: 'http://medms.rype.cn/front/bidInfo/view.do?id=' + $scope.pageId,
                 title: $scope.post.topic + ' ' + $scope.post.createDate,
                 description: $scope.post.subject,
                 imageUrl: 'http://ui.utimor.com/images/xxapp-icon.png',

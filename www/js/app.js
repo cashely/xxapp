@@ -7,7 +7,7 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
 
 .run(function ($ionicPlatform, Pusher, $rootScope, $ionicModal, $http, $cordovaNetwork, $ionicSideMenuDelegate, $cookies, $cordovaToast, $location, $state, $ionicPopup, $timeout) {
     //    httpAddress = 'http://172.19.8.160:9202/rype-app/';
-    httpAddress = 'http://testnapp.rype.cn/rype-app/';
+    httpAddress = 'http://bidi.rype.cn/rype-app/';
     
     $ionicPlatform.ready(function () {
         Pusher.init();
@@ -240,6 +240,7 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
                 id = pusher.openNotification.extras.pageId;
             } else {
                 alertContent = event.aps.alert;
+                id = event.pageId;
             };
             if(id && id != ''){
                 $rootScope.showPageModal(id);
@@ -276,7 +277,7 @@ angular.module('starter', ['ionic', 'starter.router', 'starter.controllers', 'ng
                     pusher.setDebugModeFromIos();
                     pusher.setApplicationIconBadgeNumber(0);
                 } else {
-                    pusher.setDebugMode(true);
+                    pusher.setDebugMode(false);
                 };
             };
         }
